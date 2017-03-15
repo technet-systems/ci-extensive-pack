@@ -22,4 +22,16 @@ class Welcome extends CI_Controller {
 	{
 		$this->load->view('welcome_message');
 	}
+        
+        public function lang_test() {
+            $this->form_validation->set_rules('name', 'name', 'required');
+            if ($this->form_validation->run() == FALSE)
+                {
+                        $this->load->view('welcome_message');
+                }
+                else
+                {
+                        $this->load->view('welcome_message');
+                }
+        }
 }
