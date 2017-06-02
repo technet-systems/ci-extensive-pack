@@ -1,0 +1,8 @@
+#URL: http://stackoverflow.com/questions/23395706/htaccess-hide-subdirectory-url-after-redirect
+#GGL: htaccess redirect to subfolder hide
+
+RewriteCond %{THE_REQUEST} ^GET\ /public/
+RewriteCond %{HTTP_HOST} ^(www\.)?presta.technet.systems$
+RewriteRule ^public/(.*) /$1 [L,R=301]
+RewriteCond %{HTTP_HOST} ^(www\.)?presta.technet.systems$
+RewriteRule !^public/ public%{REQUEST_URI} [L]

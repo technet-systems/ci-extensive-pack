@@ -45,4 +45,16 @@ class Test extends CI_Controller {
 		$this->load->view('test_view',$data);
 
 	}
+
+	public function twig_test() {
+	    $this->load->library('twig');
+	    $data = [
+	        'page' => [
+	            'title' => 'Test WWW',
+                'content' => 'some content'
+            ]
+        ];
+
+	    $this->twig->display('twig/test_view', $data);
+    }
 }
