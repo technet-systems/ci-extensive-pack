@@ -1,7 +1,9 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-class Test extends CI_Controller {
+//include_once(APPPATH.'core/MY_Back_Controller.php');
+
+class Test extends BACK_Controller {
 
 	/**
 	 * Index Page for this controller.

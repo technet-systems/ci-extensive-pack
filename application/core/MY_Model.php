@@ -1,5 +1,11 @@
 <?php defined('BASEPATH') OR exit('No direct script access allowed');
 /*
+ * MODIFIED private function _set_timestamps()
+ * by adding my own table prefixes
+ * @author daru79
+ */
+
+/*
 * Copyright (C) 2014 @avenirer [avenir.ro@gmail.com]
 * Everyone is permitted to copy and distribute verbatim or modified copies of this license document,
 * and changing it is allowed as long as the name is changed.
@@ -1774,9 +1780,9 @@ class MY_Model extends CI_Model
     {
         if($this->timestamps !== FALSE)
         {
-            $this->_created_at_field = (is_array($this->timestamps) && isset($this->timestamps[0])) ? $this->timestamps[0] : 'created_at';
-            $this->_updated_at_field = (is_array($this->timestamps) && isset($this->timestamps[1])) ? $this->timestamps[1] : 'updated_at';
-            $this->_deleted_at_field = (is_array($this->timestamps) && isset($this->timestamps[2])) ? $this->timestamps[2] : 'deleted_at';
+            $this->_created_at_field = (is_array($this->timestamps) && isset($this->timestamps[0])) ? $this->timestamps[0] : substr($this->primary_key,0,3) . 'created_at';
+            $this->_updated_at_field = (is_array($this->timestamps) && isset($this->timestamps[1])) ? $this->timestamps[1] : substr($this->primary_key,0,3) . 'updated_at';
+            $this->_deleted_at_field = (is_array($this->timestamps) && isset($this->timestamps[2])) ? $this->timestamps[2] : substr($this->primary_key,0,3) . 'deleted_at';
         }
         return TRUE;
     }
