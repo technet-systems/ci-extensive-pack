@@ -11,8 +11,8 @@
 ## Features
 
 * Authorization
-    * [ ] Login
-    * [ ] Password reset
+    * [x] Login
+    * [x] Password reset
 * Users management
     * [ ] Change password
     * [ ] Add / edit / delete users
@@ -20,5 +20,5 @@
 
 ## Change log:
 
-* 0.1.0 (2017-06-02)
+* 1.1.0-dev (2017-06-02)
   * work in progress

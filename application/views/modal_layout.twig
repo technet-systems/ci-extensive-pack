@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link href='http://fonts.googleapis.com/css?family=Roboto:300,400,500,700,900' rel='stylesheet' type='text/css'>
+
+    <!-- Page title -->
+    <title>LUNA | Responsive Admin Theme</title>
+
+    <!-- Vendor styles -->
+    {% block vendor_stylesheets %}
+        <link rel="stylesheet" href="{{ base_url('assets/back/vendor/fontawesome/css/font-awesome.css') }}" >
+        <link rel="stylesheet" href="{{ base_url('assets/back/vendor/animate.css/animate.css') }}" >
+        <link rel="stylesheet" href="{{ base_url('assets/back/vendor/bootstrap/css/bootstrap.css') }}" >
+    {% endblock %}
+
+    {% block app_stylesheets %}
+        <!-- App styles -->
+        <link rel="stylesheet" href="{{ base_url('assets/back/styles/pe-icons/pe-icon-7-stroke.css') }}"/>
+        <link rel="stylesheet" href="{{ base_url('assets/back/styles/pe-icons/helper.css') }}"/>
+        <link rel="stylesheet" href="{{ base_url('assets/back/styles/stroke-icons/style.css') }}"/>
+        <link rel="stylesheet" href="{{ base_url('assets/back/styles/style.css') }}">
+    {% endblock %}
+</head>
+
+    {% block body %}{% endblock %}
+
+    <!-- Vendor scripts -->
+    {% block vendor_scripts %}
+        <script src="{{ base_url('assets/back/vendor/pacejs/pace.min.js') }}"></script>
+        <script src="{{ base_url('assets/back/vendor/jquery/dist/jquery.min.js') }}"></script>
+        <script src="{{ base_url('assets/back/vendor/bootstrap/js/bootstrap.min.js') }}"></script>
+    {% endblock %}
+
+    <!-- App scripts -->
+    {% block app_scripts %}
+        <script src="{{ base_url('assets/back/scripts/luna.js') }}"></script>
+    {% endblock %}
+</body>
+
+</html>

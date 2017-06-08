@@ -1,0 +1,55 @@
+{% extends "modal_layout.twig" %}
+
+{% block body %}
+    <body class="blank">
+
+<!-- Wrapper-->
+<div class="wrapper">
+
+    <!-- Main content-->
+    <section class="content">
+        <div class="container-center animated slideInDown">
+
+            <div class="view-header">
+                <div class="header-icon">
+                    <i class="pe page-header-icon pe-7s-id"></i>
+                </div>
+                <div class="header-title">
+                    <h3>Resetowanie hasła</h3>
+                    <small>
+                        Proszę o podanie e-maila potrzebnego do resetu hasła
+                    </small>
+                </div>
+            </div>
+
+            {{ validation_errors('<div class="panel panel-filled panel-c-danger"><div class="panel-heading">', '</div></div>') | raw}}
+
+            {% if session.flashdata.error == TRUE %}
+                <div class="panel panel-filled panel-c-danger"><div class="panel-heading">{{ session.flashdata.error }}</div></div>
+            {% elseif session.flashdata.success == TRUE %}
+                <div class="panel panel-filled panel-c-success"><div class="panel-heading">{{ session.flashdata.success }}</div></div>
+            {% endif %}
+
+            <div class="panel panel-filled">
+                <div class="panel-body">
+                    {{ form_open() }}
+                    <div class="form-group">
+                        <label class="control-label" for="username">E-mail</label>
+                        <input type="text" placeholder="twoj.mail@gmail.com" value="" name="us_email" id="us_email" class="form-control">
+                        <span class="help-block small">Twój unikalny e-mail</span>
+                    </div>
+                    <div>
+                        <input type="submit" name="submit" value="Reset" class="btn btn-accent" />
+                        <a class="btn btn-default" href="{{ base_url('back/auth') }}">Powrót do logowania</a>
+                    </div>
+                    {{ form_close() }}
+                </div>
+            </div>
+
+        </div>
+    </section>
+    <!-- End main content-->
+
+</div>
+<!-- End wrapper-->
+{% endblock %}

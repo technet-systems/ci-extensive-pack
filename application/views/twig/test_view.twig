@@ -1,2 +1,33 @@
+<html>
+<head>
+    <!-- Vendor styles -->
+    {% block vendor_stylesheets %}
+        <link rel="stylesheet" href="{{ base_url('assets/back/vendor/fontawesome/css/font-awesome.css') }}"/>
+        <link rel="stylesheet" href="{{ base_url('assets/back/vendor/animate.css/animate.css') }}"/>
+        <link rel="stylesheet" href="{{ base_url('assets/back/vendor/bootstrap/css/bootstrap.css') }}"/>
+    {% endblock %}
+
+    <!-- App styles -->
+    {% block app_stylesheets %}
+    <link rel="stylesheet" href="{{ base_url('assets/back/styles/pe-icons/pe-icon-7-stroke.css') }}"/>
+    <link rel="stylesheet" href="{{ base_url('assets/back/styles/pe-icons/helper.css') }}"/>
+    <link rel="stylesheet" href="{{ base_url('assets/back/styles/stroke-icons/style.css') }}"/>
+{% endblock %}
+</head>
+<body>
+<div class="container">lalalala</div>
 <h1>{{ page.title }}</h1>
 <p>{{ page.content }}</p>
+<!-- Vendor scripts -->
+{% block vendor_scripts %}
+    <script src="{{ base_url('assets/back/vendor/pacejs/pace.min.js') }}"></script>
+    <script src="{{ base_url('assets/back/vendor/jquery/dist/jquery.min.js') }}"></script>
+    <script src="{{ base_url('assets/back/vendor/bootstrap/js/bootstrap.min.js') }}"></script>
+    {% endblock %}
+
+    {% block app_scripts %}
+        <!-- App scripts -->
+        <script src="{{ base_url('assets/back/scripts/luna.js') }}"></script>
+    {% endblock %}
+</body>
+</html>
