@@ -4,9 +4,6 @@
  */
 
 $(document).ready(function () {
-
-
-
     // Handle minimalize left menu
     $('.left-nav-toggle a').on('click', function(event){
         event.preventDefault();
@@ -44,4 +41,50 @@ $(document).ready(function () {
         var hpanel = $(event.target).closest('div.panel');
         hpanel.remove();
     });
+
+    // Handle menu active URL
+    var pathName = window.location.pathname;
+    var controlerName = pathName.split('/')[4];
+    var methodName = pathName.split('/')[5];
+
+    if(controlerName === 'dashboard') {
+        if(methodName === 'overview') {
+            $('#dashboard-overview-menu').addClass('active');
+        }
+    } else if(controlerName === 'administration') {
+        if(methodName === 'user') {
+            $('#administration-user-menu').addClass('active');
+        }
+    } else if(controlerName === 'client') {
+        $('#client-menu').addClass('active');
+        $('#client-submenu').addClass('in');
+        if(methodName === 'add') {
+            $('#client-submenu-add').addClass('active');
+        } else if(methodName === 'all') {
+            $('#client-submenu-all').addClass('active');
+        }
+    } else if(controlerName === 'insurance') {
+        $('#client-menu').addClass('active');
+        $('#client-submenu').addClass('in');
+    } else if(controlerName === 'company') {
+        $('#company-menu').addClass('active');
+        $('#company-submenu').addClass('in');
+        if(methodName === 'add') {
+            $('#company-submenu-add').addClass('active');
+        } else if(methodName === 'all') {
+            $('#company-submenu-all').addClass('active');
+        }
+    } else if(controlerName === 'product') {
+        $('#company-menu').addClass('active');
+        $('#company-submenu').addClass('in');
+    } else if(controlerName === 'message') {
+        $('#message-menu').addClass('active');
+        $('#message-submenu').addClass('in');
+        if(methodName === 'add_email') {
+            $('#message-submenu-add-email').addClass('active');
+        } else if(methodName === 'add_sms') {
+            $('#message-submenu-add-sms').addClass('active');
+        }
+    }
+    // END Rozwijanie bocznego menu w zaleĹźnoĹci od pierwszego segmentu URL'a
 });

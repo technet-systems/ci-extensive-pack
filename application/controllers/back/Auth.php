@@ -3,8 +3,6 @@
 class Auth extends BACK_Controller {
     public function __construct() {
         parent::__construct();
-        // Adding global variable for display flash data in TWIG
-        $this->twig->addGlobal('session', $this->session);
     }
 
     /**
@@ -13,16 +11,16 @@ class Auth extends BACK_Controller {
      */
     public function index() {
         // Check if the user is already logged in
-        if($this->auth_m->loggedin()) {
+        if($this->user_m->loggedin()) {
             redirect('back/dashboard');
         } else {
             // Setting $_POST variables into the rules array
-            $this->form_validation->set_rules($this->auth_m->rules['login']);
+            $this->form_validation->set_rules($this->user_m->rules['login']);
 
             // Let's run the validation
             if($this->form_validation->run()) {
                 // If email/pass are correct then redirect to dashboard
-                if($this->auth_m->login()) {
+                if($this->user_m->login()) {
                     redirect('back/dashboard');
 
                 // If not than set and print a flash data on the login page
@@ -35,7 +33,7 @@ class Auth extends BACK_Controller {
 
         // Destroy the current session and display it in the proper view
         $this->session->sess_destroy();
-        $this->twig->display('back/auth/index_v');
+        $this->twig->display('back/auth/index_v', $this->data_back);
     }
 
     /**
@@ -52,14 +50,14 @@ class Auth extends BACK_Controller {
      */
     public function reset() {
         // Setting $_POST variables into the rules array
-        $this->form_validation->set_rules($this->auth_m->rules['reset']);
+        $this->form_validation->set_rules($this->user_m->rules['reset']);
 
         // Let's run the validation
         if($this->form_validation->run()) {
-            $this->auth_m->reset();
+            $this->user_m->reset();
 
             $this->session->set_flashdata('success', 'Sprawdź e-maila z tymczasowym hasłem');
-            $this->twig->display('back/auth/reset_v');
+            redirect('back/auth');
         }
 
         $this->twig->display('back/auth/reset_v');

@@ -6,8 +6,13 @@ class Dashboard extends BACK_Controller {
     }
 
     public function index() {
-        echo 'You are logged in!';
-        var_dump($this->session->userdata());
-        echo anchor($uri = 'back/auth/logout', $title = 'Log out');
+        redirect('back/dashboard/overview');
+    }
+
+    public function overview() {
+        // Checking if user has a temporary password set
+        !$this->data_back['us_pass_temp'] || $this->session->set_flashdata('warning', 'Zmień swoje tymczasowe hasło na własne');
+
+        $this->twig->display('back/dashboard/overview_v', $this->data_back);
     }
 }

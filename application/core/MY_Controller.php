@@ -5,7 +5,7 @@ class MY_Controller extends CI_Controller {
      * Array variable to handle data between back-end classes
      * @var array
      */
-    protected $data = array();
+    protected $data_app = array();
 
     public function __construct() {
         parent::__construct();

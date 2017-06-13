@@ -6,6 +6,7 @@
 * [x] [Installed Translations for System Messages](https://github.com/kenjis/codeigniter-composer-installer#install-translations-for-system-messages)
 * [x] [Awesome MY_Model by avenirer](https://github.com/avenirer/CodeIgniter-MY_Model)
 * [x] [TWIG simple and secure](https://github.com/technet-systems/ci-extensive-pack)
+* [x] [X-editable - AJAX in-line editing for Bootstrap 2.x / 3.x](https://github.com/vitalets/x-editable)
 * [x] [.htaccess file provides to redirect and to hide `/public` directory](http://stackoverflow.com/questions/23395706/htaccess-hide-subdirectory-url-after-redirect)
 
 ## Features
@@ -14,9 +15,9 @@
     * [x] Login
     * [x] Password reset
 * Users management
-    * [ ] Change password
-    * [ ] Add / edit / delete users
-    * [ ] Granting permissions to users
+    * [x] Change password
+    * [x] Add / edit / delete users
+    * [x] Granting permissions to users
 
 ## Change log:
 
