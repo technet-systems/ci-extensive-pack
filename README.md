@@ -11,15 +11,15 @@
 
 ## Features
 
-* Authorization
-    * [x] Login
-    * [x] Password reset
-* Users management
-    * [x] Change password
-    * [x] Add / edit / delete users
-    * [x] Granting permissions to users
+* Pages
+    * [ ] CRUD
+    * [ ] Setting layouts
+    * [ ] Setting modules (depending on layouts)
+* Menu
+    * [ ] CRUD
+    * [ ] Sort menu items
 
 ## Change log:
 
-* 1.1.0-admin (2017-06-02 - 2017-06-13)
-  * initial release
+* 1.1.0-cms (2017-06-13 - ?)
+  * work in progress
