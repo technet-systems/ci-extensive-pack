@@ -21,5 +21,5 @@
 
 ## Change log:
 
-* 1.1.0-dev (2017-06-02)
-  * work in progress
+* 1.1.0-admin (2017-06-02 - 2017-06-13)
+  * initial release
