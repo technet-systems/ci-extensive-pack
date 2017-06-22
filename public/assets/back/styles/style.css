@@ -1767,6 +1767,12 @@ h3,
 .c-accent {
   color: #f6a821;
 }
+.c-success {
+  color: #1bbf89;
+}
+.c-danger {
+  color: #db524b;
+}
 .c-white {
   color: #FFFFFF;
 }

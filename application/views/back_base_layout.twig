@@ -91,6 +91,19 @@
                     </ul>
                 </li>
 
+                <li class="nav-category" id="content-menu">
+                    Zawartość
+                </li>
+                <li>
+                    <a href="#content-page-submenu" data-toggle="collapse" aria-expanded="false">
+                        Strony<span class="sub-nav-icon"> <i class="stroke-arrow"></i> </span>
+                    </a>
+                    <ul id="content-page-submenu" class="nav nav-second collapse">
+                        <li id="content-page-all-submenu"><a href="{{ base_url('back/content/page') }}"> Wszystkie</a></li>
+                        <li id="content-page-add-submenu"><a href="{{ base_url('back/content/page_add') }}"> Nowa</a></li>
+                    </ul>
+                </li>
+
                 <li class="nav-category" id="administration-menu">
                     Administracja
                 </li>
