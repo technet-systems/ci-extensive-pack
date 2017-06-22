@@ -1,0 +1,296 @@
+{% extends "back_base_layout.twig" %}
+
+{% block vendor_stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ base_url('assets/back/vendor/datatables/datatables.min.css') }}"/>
+    <link rel="stylesheet" href="{{ base_url('assets/back/vendor/select2/dist/css/select2.min.css') }}"/>
+{% endblock %}
+
+{% block body %}
+    <section class="content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-lg-12">
+                    {{ validation_errors('<div class="panel panel-filled panel-c-danger"><div class="panel-heading">', '</div></div>') | raw}}
+
+                    {% if session.flashdata.error == TRUE %}
+                        <div class="panel panel-filled panel-c-danger"><div class="panel-heading">{{ session.flashdata.error }}</div></div>
+                    {% elseif session.flashdata.success == TRUE %}
+                        <div class="panel panel-filled panel-c-success"><div class="panel-heading">{{ session.flashdata.success }}</div></div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="view-header">
+                        <div class="pull-right text-right" style="line-height: 14px">
+                            <a href="{{ base_url('back/content/page') }}" class="btn btn-w-md btn-accent">Powrót</a>
+                        </div>
+                        <div class="header-icon">
+                            <i class="pe page-header-icon pe-7s-note"></i>
+                        </div>
+                        <div class="header-title">
+                            <h3 class="m-b-xs">Zawartość | Edycja | <span class="text-muted"><a href="#" class="popup_edit" data-type="text" data-pk="{{ page.pa_id }}" data-url="{{ base_url('back/content/inline_update') }}" data-name="pa_title">{{ page.pa_title }}</a></span></h3>
+                            <small>
+                                Możliwość edycji wybranej strony
+                            </small>
+                        </div>
+                    </div>
+                    <hr>
+                </div>
+            </div>
+
+            <div class="row m-t-lg">
+                <div class="col-lg-9">
+                    <div class="panel panel-filled panel-c-accent">
+                        <div class="panel-heading">
+                            Tworzenie modułów
+                            <p><small class="text-muted">W celu utworzenia nowego modułu wybierz dostępny moduł (po lewej) i wypełnij pola formularza</small></p>
+                        </div>
+                        <div class="panel-body">
+                            <div class="tabs-container">
+
+                                <div class="tabs-left">
+                                    <ul class="nav nav-tabs">
+                                        {% set counter = 0 %}
+                                        {% for key, form in forms %}
+                                            <li class="{% if counter == 0 %}active{% endif %}"><a data-toggle="tab" href="#tab-{{ counter }}"> {{ key }}</a></li>
+                                            {% set counter = counter + 1 %}
+                                        {% endfor %}
+                                        {% set counter = 0 %}
+                                    </ul>
+
+                                    <div class="tab-content ">
+                                        {% for key, form in forms %}
+                                            <div id="tab-{{ counter }}" class="tab-pane {% if counter == 0 %}active{% endif %}">
+                                                <div class="panel-body">
+                                                    {{ form_open('', 'class="form-horizontal"') }}
+                                                    {{ form | raw }}
+                                                    <input type="hidden" value="{{ key }}" name="mo_layout">
+                                                    <button type="submit" class="btn btn-success pull-right" id="submit"><i class="fa fa-save"></i> Zapisz</button>
+                                                    {{ form_close() }}
+                                                    {% set counter = counter + 1 %}
+                                                </div>
+                                            </div>
+                                        {% endfor %}
+                                        {% set counter = 0 %}
+                                    </div>
+
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-3">
+                    <div class="panel panel-filled panel-c-accent">
+                        <div class="panel-heading">
+                            Opcje
+                            <p><small class="text-muted">Podstawowe elementy składowe strony</small></p>
+                        </div>
+                        <div class="panel-body">
+                            <div class="table-responsive">
+                                <table  class="table table-bordered">
+                                    <tbody>
+                                        <tr>
+                                            <td>Strona nadrzędna</td>
+                                            <td>Wybór strony nadrzędnej (podobnie jak w WP jako zwykły odnośnik) utworzonej wcześniej w zakładce dot. MENU</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Odnośnik</td>
+                                            <td><a href="#" class="popup_edit" data-type="text" data-pk="{{ page.pa_id }}" data-url="{{ base_url('back/content/inline_update') }}" data-name="pa_slug">{{ page.pa_slug }}</a></td>
+                                        </tr>
+                                        <tr>
+                                            <td>Opis</td>
+                                            <td><a href="#" class="popup_edit" data-type="textarea" data-pk="{{ page.pa_id }}" data-url="{{ base_url('back/content/inline_update') }}" data-name="pa_description">{{ page.pa_description }}</a></td>
+                                        </tr>
+                                        <tr>
+                                            <td>Szablon</td>
+                                            <td><a href="#" class="popup_edit" data-type="select" data-pk="{{ page.pa_id }}" data-url="{{ base_url('back/content/inline_update') }}" data-name="pa_layout" data-source="[{% for layout in layouts %} {'value':'{{ layout }}', 'text':'{{ layout }}'}, {% endfor %}]" data-value="{{ page.pa_layout }}">{{ page.pa_layout }}</a></td>
+                                        </tr>
+                                        <tr>
+                                            <td>Status</td>
+                                            <td><a href="#" class="popup_edit" data-type="select" data-pk="{{ page.pa_id }}" data-url="{{ base_url('back/content/inline_update') }}" data-name="pa_status" data-source="[{'value':'Aktywna', 'text':'Aktywna'},{'value':'Nieaktywna', 'text':'Nieaktywna'}]" data-value="{{ page.pa_status }}">{{ page.pa_status }}</a></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-9">
+                    <div class="panel panel-filled panel-c-accent">
+                        <div class="panel-heading">
+                            Edycja utworzonych modułów
+                            <p><small class="text-muted">Kliknij w strzałkę po prawej w celu rozwinięcia formularza do edycji modułu</small></p>
+                        </div>
+                        <div class="panel-body">
+                            {% for module in modules %}
+                            <div class="panel panel-filled panel-collapse">
+                                <div class="panel-heading">
+                                    <div class="panel-tools">
+                                        <a class="panel-toggle"><i class="fa fa-chevron-down"></i></a>
+                                    </div>
+                                    {{ module.mo_description }}
+                                </div>
+                                <div class="panel-body" style="display: none;">
+
+                                    {{ form_open('back/content/edit_module/' ~ module.mo_id, 'class="form-horizontal"') }}
+                                    {{ module.mo_form | raw }}
+                                    <input type="hidden" value="{{ module.mo_layout }}" name="mo_layout">
+                                    <input type="hidden" value="{{ module.mo_pa_id }}" name="mo_pa_id">
+                                    <div>
+                                        <button type="submit" class="btn btn-success pull-right"><i class="fa fa-save"></i> Zapisz</button>
+                                        <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteModule-{{ module.mo_id }}"><i class="fa fa-trash"></i> Usuń</button>
+                                    </div>
+                                    {{ form_close() }}
+
+                                    <div class="modal fade" id="deleteModule-{{ module.mo_id }}" tabindex="-1" role="dialog" aria-hidden="true" style="display: none;">
+                                        <div class="modal-dialog modal-sm">
+                                            <div class="modal-content">
+                                                <div class="modal-header text-center">
+                                                    <h4 class="modal-title">Usuwanie modułu</h4>
+                                                    <h4>{{ module.mo_description }}</h4>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <p><strong>Czy na pewno chcesz usunąć moduł? </strong></p>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-default" data-dismiss="modal">Anuluj</button>
+                                                    <a href="{{ base_url('back/content/delete_module/' ~ module.mo_pa_id ~ '/' ~ module.mo_id) }}" class="btn btn-danger">Usuń</a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-3">
+                    <div class="panel panel-filled panel-c-accent">
+                        <div class="panel-heading">
+                            Kolejność modułów
+                            <p><small class="text-muted">Przytrzymaj lewym przyciskiem myszy wybrany moduł i przeciągnij go na osi pionowej</small></p>
+                        </div>
+                        <div class="panel-body">
+                            <input type="hidden" id="nestable-output" />
+                            <div class="dd" id="nestable">
+                                <ol class="dd-list">
+
+                                    {% for module in modules %}
+                                        <li class="dd-item" data-id="{{ module.mo_id }}">
+                                            <div class="dd-handle">
+                                                <span><i class="fa fa-arrows-v m-r-xs c-accent"></i></span>
+                                                {{ module.mo_description }}
+                                            </div>
+                                        </li>
+                                    {% endfor %}
+
+                                </ol>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+    <!-- End main content-->
+
+{% endblock %}
+
+{% block vendor_scripts %}
+    {{ parent() }}
+    <script src="{{ base_url('assets/back/vendor/datatables/datatables.min.js') }}"></script>
+    <script src="{{ base_url('assets/back/vendor/select2/dist/js/select2.js') }}"></script>
+    <script src="{{ base_url('assets/back/vendor/nestable/jquery.nestable.js') }}"></script>
+
+    <script>
+    $(document).ready(function () {
+        $('#tableExample2').DataTable({
+            "dom": "<'row'<'col-sm-6'l><'col-sm-6'f>>t<'row'<'col-sm-6'i><'col-sm-6'p>>",
+            "lengthMenu": [ [6, 25, 50, -1], [6, 25, 50, "Wszystko"] ],
+            "iDisplayLength": 6,
+
+            "fnRowCallback": function (nRow, aData, iDisplayIndex, iDisplayIndexFull) {
+
+
+            }
+        });
+
+        $(".select2_demo_1").select2();
+
+        $('.popup_edit').editable({
+            ajaxOptions: {
+                dataType: 'json' //assuming json response
+            },
+            emptytext: 'Brak danych',
+            success: function(data, newValue) {
+                if(data.status == 0) {
+                    return data.msg; // Message will be shown in editable form
+                } else {
+                    setTimeout(function(){ // Run toastr notification with success message
+                            toastr.options = {
+                                "positionClass": "toast-top-right",
+                                "closeButton": true,
+                                "progressBar": true,
+                                "showEasing": "swing",
+                                "timeOut": "6000"
+                            };
+                            toastr.success('<strong>Sukces! </strong> <br/><small>' + data.msg + '</small>');
+                        },500
+                    );
+                }
+            }
+        });
+
+        // START NESTED LIST
+        // https://stackoverflow.com/questions/32255773/jquery-nestable-output-into-mysql-database
+        // GGL: nestable jquery send data ajax php
+        // Log for nestable list
+        var updateOutput = function (e) {
+            var list = e.length ? e : $(e.target),
+                output = list.data('output');
+            if (window.JSON) {
+                output.val(window.JSON.stringify(list.nestable('serialize')));//, null, 2));
+
+                $.post(
+                    '{{ base_url("back/content/update_nestable") }}',
+                        {
+                            'output' : output.val()
+                        },
+                    function(data) {
+                        console.log('success')
+                    }
+                );
+            } else {
+                output.val('JSON browser support required for this demo.');
+            }
+        };
+
+        // Activate Nestable for list 1
+        $('#nestable').nestable({
+            group: 1,
+            maxDepth: 1
+        }).on('change', updateOutput);
+
+        // Output initial serialised data
+        updateOutput($('#nestable').data('output', $('#nestable-output')));
+        // END NESTED LIST
+
+    });
+
+    $(function () {
+        $('[data-toggle="tooltip"]').tooltip()
+    })
+</script>
+{% endblock %}

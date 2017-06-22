@@ -12,12 +12,15 @@
 ## Features
 
 * Pages
-    * [ ] CRUD
-    * [ ] Setting layouts
-    * [ ] Setting modules (depending on layouts)
+    * [x] CRUD
+    * [x] Setting layouts
+    * [x] Setting modules (depending on layouts)
 * Menu
     * [ ] CRUD
     * [ ] Sort menu items
+* Media
+    * [ ] CRUD
+    * [ ] Adding to specific modules
 
 ## Change log:
 

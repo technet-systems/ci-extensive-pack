@@ -32,7 +32,7 @@
                         <div class="header-title">
                             <h3 class="m-b-xs">Administracja | <span class="text-muted">Użytkownicy</span></h3>
                             <small>
-                                Możliwość edycji danych użytkowników, nadawanie im uprawnień oraz tworzenie nowych kont
+                                Możliwość edycji danych użytkowników oraz tworzenia nowych kont
                             </small>
                         </div>
                     </div>
@@ -44,13 +44,12 @@
                 <div class="col-md-12">
                     <div class="panel panel-filled">
                         <div class="panel-heading">
-                            Tabelaryczna lista wszystkich uprawnionych do zarządzania aplikacją
-
                             {% if us_auth == 'Super Admin' %}
-                            <div class="pull-right text-right" style="line-height: 14px">
-                                <button class="btn btn-w-md btn-success pull-right" data-toggle="modal" data-target="#modalADD">Dodaj użytkownika</button>
-                            </div>
+                                <div class="panel-tools">
+                                    <button class="btn btn-w-md btn-success" data-toggle="modal" data-target="#modalADD">Dodaj użytkownika</button>
+                                </div>
                             {% endif %}
+                            Tabelaryczna lista wszystkich uprawnionych do zarządzania aplikacją
 
                         </div>
                         <div class="panel-body">
