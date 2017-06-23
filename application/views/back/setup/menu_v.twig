@@ -1,0 +1,396 @@
+{% extends "back_base_layout.twig" %}
+
+{% block vendor_stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ base_url('assets/back/vendor/datatables/datatables.min.css') }}"/>
+    <link rel="stylesheet" href="{{ base_url('assets/back/vendor/select2/dist/css/select2.min.css') }}"/>
+{% endblock %}
+
+{% block body %}
+    <section class="content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-lg-12">
+                    {{ validation_errors('<div class="panel panel-filled panel-c-danger"><div class="panel-heading">', '</div></div>') | raw}}
+
+                    {% if session.flashdata.error == TRUE %}
+                        <div class="panel panel-filled panel-c-danger"><div class="panel-heading">{{ session.flashdata.error }}</div></div>
+                    {% elseif session.flashdata.success == TRUE %}
+                        <div class="panel panel-filled panel-c-success"><div class="panel-heading">{{ session.flashdata.success }}</div></div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="view-header">
+                        <div class="header-icon">
+                            <i class="pe page-header-icon pe-7s-menu"></i>
+                        </div>
+                        <div class="header-title">
+                            <h3 class="m-b-xs">Menu</h3>
+                            <small>
+                                Możliwość tworzenia i edycji struktury nawigacji strony
+                            </small>
+                        </div>
+                    </div>
+                    <hr>
+                </div>
+            </div>
+
+            <div class="row m-t-lg">
+                <div class="col-lg-9">
+                    <div class="panel panel-filled panel-c-accent">
+                        <div class="panel-heading">
+                            Tworzenie elementów menu
+                            <p><small class="text-muted">W celu utworzenia nowego elementu wybierz istniejącą (już utworzoną) stronę lub stwórz nowy odnośnik</small></p>
+                        </div>
+                        <div class="panel-body">
+                            <div class="tabs-container">
+
+                                <div class="tabs-left">
+                                    <ul class="nav nav-tabs">
+                                        <li class="active"><a data-toggle="tab" href="#tab-6"> Wybór strony</a></li>
+                                        <li class=""><a data-toggle="tab" href="#tab-7">Własny odnośnik</a></li>
+                                    </ul>
+                                    <div class="tab-content ">
+                                        <div id="tab-6" class="tab-pane active">
+                                            <div class="panel-body">
+                                                <p><strong class="c-white">Elementem nawigacji będzie utworzona wcześniej strona</strong></p>
+                                                <p><small>Wybierz odpowiednią stronę</small></p>
+
+                                                <div class="row">
+                                                    <div class="col-sm-12">
+                                                        {{ form_open('back/setup/save_menu_item', 'class="form-horizontal"') }}
+                                                            <div class="form-group"><label for="me_pa_slug" class="col-sm-2 control-label">Dostępne strony <code>*</code></label>
+                                                                <div class="col-sm-10">
+                                                                    <select name="me_pa_slug" class="select2_demo_2 form-control" style="width: 100%">
+                                                                        <option></option>
+                                                                        {% for page in pages %}
+                                                                        <option value="{{ page.pa_slug }}">{{ page.pa_title }}</option>
+                                                                        {% endfor %}
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+                                                            <input type="hidden" name="form-name" value="nav-site" />
+                                                            <button type="submit" class="btn btn-success pull-right"><i class="fa fa-save"></i> Zapisz</button>
+                                                        {{ form_close() }}
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                        <div id="tab-7" class="tab-pane">
+                                            <div class="panel-body">
+                                                <p><strong class="c-white">Elementem nawigacji będzie utworzony link</strong></p>
+                                                <p><small>Utwórz link, który będzie bazą dla podstron, np. <code>#</code> lub odnośnikiem do zewnętrznego serwisu, np. <code>http://wp.pl/</code></small></p>
+
+                                                <div class="row">
+                                                    <div class="col-sm-12">
+                                                        {{ form_open('back/setup/save_menu_item', 'class="form-horizontal"') }}
+                                                        <div class="form-group"><label for="me_link" class="col-sm-2 control-label">Adres odnośnika <code>*</code></label>
+                                                            <div class="col-sm-10">
+                                                                <input class="form-control" placeholder="Wpisz adres dla odnośnika" type="text" name="me_link" />
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="form-group"><label for="me_title" class="col-sm-2 control-label">Tekst odnośnika <code>*</code></label>
+                                                            <div class="col-sm-10">
+                                                                <input class="form-control" placeholder="Tekst odnośnika" type="text" name="me_title" />
+                                                            </div>
+                                                        </div>
+                                                        <input type="hidden" name="form-name" value="nav-anchor" />
+                                                        <button type="submit" class="btn btn-success pull-right"><i class="fa fa-save"></i> Zapisz</button>
+                                                        {{ form_close() }}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-3">
+                    <div class="panel panel-filled panel-c-accent">
+                        <div class="panel-heading">
+                            Kolejność głównych elementów menu
+                            <p><small class="text-muted">Podstawowe elementy składowe nawigacji</small></p>
+                        </div>
+                        <div class="panel-body">
+
+                            <input type="hidden" id="nestable-output" />
+                            <div class="dd" id="nestable">
+                                <ol class="dd-list">
+
+                                    {% for menu_item in menu_items %}
+                                    <li class="dd-item" data-id="{{ menu_item.me_id }}">
+                                        <div class="dd-handle">
+                                            <span><i class="fa fa-arrows-v m-r-xs c-accent"></i></span>
+                                            {{ menu_item.me_title_alt }}
+                                        </div>
+                                    </li>
+                                    {% endfor %}
+
+                                </ol>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-9">
+                    <div class="panel panel-filled panel-c-accent">
+                        <div class="panel-heading">
+                            Edycja utworzonych elementów menu
+                            <p><small class="text-muted">Kliknij w strzałkę po prawej w celu rozwinięcia formularza do edycji elementu nawigacji</small></p>
+                        </div>
+                        <div class="panel-body">
+
+                            {% for menu_item in menu_items %}
+                            <div class="panel panel-filled panel-collapse">
+                                <div class="panel-heading">
+                                    <div class="panel-tools">
+                                        <a class="panel-toggle"><i class="fa fa-chevron-down"></i></a>
+                                    </div>
+                                    {{ menu_item.me_title_alt }} | <span class="text-muted"> {% if menu_item.me_pa_slug != NULL %} strona {% else %} odnośnik {% endif %} </span>
+                                </div>
+                                <div class="panel-body" style="display: none;">
+
+                                    {{ form_open('back/setup/save_menu_item/' ~ menu_item.me_id, 'class="form-horizontal"') }}
+                                    <div class="form-group"><label for="me_title_alt" class="col-sm-2 control-label">Etykieta nawigacji <code>*</code></label>
+                                        <div class="col-sm-10">
+                                            <input class="form-control" placeholder="Wpisz nową etykietę nawigacji" type="text" name="me_title_alt" value="{{ menu_item.me_title_alt }}" />
+                                        </div>
+                                    </div>
+
+
+
+                                    <div class="form-group"><label for="me_pa_slug" class="col-sm-2 control-label">Dostępne strony <code>*</code></label>
+                                        <div class="col-sm-10">
+
+                                            <select class="select2_demo_3 form-control" multiple="multiple" style="width: 100%" name="pa_id[]">
+                                                {% for page in pages %}
+                                                <option value="{{ page.pa_id }}" {% if page.pa_parent_id == menu_item.me_id %} selected {% endif %}>{{ page.pa_title }}</option>
+                                                {% endfor %}
+                                            </select>
+
+                                        </div>
+                                    </div>
+
+                                    <button type="submit" class="btn btn-success pull-right"><i class="fa fa-save"></i> Zapisz</button>
+                                    <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteModule-{{ menu_item.me_id }}"><i class="fa fa-trash"></i> Usuń</button>
+                                    {{ form_close() }}
+
+                                    <div class="space-15"></div>
+
+                                    <div class="row">
+                                        <div class="col-xs-12">
+                                            <div class="panel panel-filled panel-c-warning">
+                                                <div class="panel-heading">
+                                                    <div class="panel-tools">
+                                                        <a class="panel-toggle"><i class="fa fa-chevron-up"></i></a>
+                                                    </div>
+                                                    Zarządzanie elementami podrzędnymi oraz zmiana ich kolejności
+                                                </div>
+                                                <div class="panel-body">
+                                                    <div class="row">
+                                                        <div class="col-xs-6">
+                                                            Tabelka z nazwami podrzędnych stron z inline-editem i opcją usunięcia
+                                                        </div>
+
+                                                        <div class="col-xs-6">
+                                                            Kolejność elementów podrzędnych
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="panel-footer">Panel footer</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    FEATURE -> jakaś tabela z wykazem podrzędnych elementów tego elementu menu (z ew. opcjami na ich edycję) i/lub dodanie elementów (podstron) do tego wybranego elementu)<br />
+                                    USUWANIE -> trza pamiętać o tym, że jeśli usuniemy element nadrzędny to elementy podrzędne muszą automatycznie być usunięte z MENU (czyli mają mieć np. wartość NULL czy coś takiego)
+
+
+                                    <div>
+
+                                    </div>
+
+                                    <div class="modal fade" id="deleteModule-{{ menu_item.me_id }}" tabindex="-1" role="dialog" aria-hidden="true" style="display: none;">
+                                        <div class="modal-dialog modal-sm">
+                                            <div class="modal-content">
+                                                <div class="modal-header text-center">
+                                                    <h4 class="modal-title">Usuwanie elementu</h4>
+                                                    <h4>{{ menu_item.me_title_alt }}</h4>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <p><strong>Czy na pewno chcesz usunąć ten element menu? </strong></p>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-default" data-dismiss="modal">Anuluj</button>
+                                                    <a href="{{ base_url('back/setup/delete_menu_item/' ~ menu_item.me_id) }}" class="btn btn-danger">Usuń</a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                            {% endfor %}
+
+
+
+
+                            <!--
+                            {% for module in modules %}
+                            <div class="panel panel-filled panel-collapse">
+                                <div class="panel-heading">
+                                    <div class="panel-tools">
+                                        <a class="panel-toggle"><i class="fa fa-chevron-down"></i></a>
+                                    </div>
+                                    {{ module.mo_description }}
+                                </div>
+                                <div class="panel-body" style="display: none;">
+
+                                    {{ form_open('back/content/edit_module/' ~ module.mo_id, 'class="form-horizontal"') }}
+                                    {{ module.mo_form | raw }}
+                                    <input type="hidden" value="{{ module.mo_layout }}" name="mo_layout">
+                                    <input type="hidden" value="{{ module.mo_pa_id }}" name="mo_pa_id">
+                                    <div>
+                                        <button type="submit" class="btn btn-success pull-right"><i class="fa fa-save"></i> Zapisz</button>
+                                        <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteModule-{{ module.mo_id }}"><i class="fa fa-trash"></i> Usuń</button>
+                                    </div>
+                                    {{ form_close() }}
+
+                                    <div class="modal fade" id="deleteModule-{{ module.mo_id }}" tabindex="-1" role="dialog" aria-hidden="true" style="display: none;">
+                                        <div class="modal-dialog modal-sm">
+                                            <div class="modal-content">
+                                                <div class="modal-header text-center">
+                                                    <h4 class="modal-title">Usuwanie modułu</h4>
+                                                    <h4>{{ module.mo_description }}</h4>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <p><strong>Czy na pewno chcesz usunąć moduł? </strong></p>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-default" data-dismiss="modal">Anuluj</button>
+                                                    <a href="{{ base_url('back/content/delete_module/' ~ module.mo_pa_id ~ '/' ~ module.mo_id) }}" class="btn btn-danger">Usuń</a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                            {% endfor %}
+                            -->
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+    <!-- End main content-->
+
+{% endblock %}
+
+{% block vendor_scripts %}
+    {{ parent() }}
+    <script src="{{ base_url('assets/back/vendor/datatables/datatables.min.js') }}"></script>
+    <script src="{{ base_url('assets/back/vendor/select2/dist/js/select2.js') }}"></script>
+    <script src="{{ base_url('assets/back/vendor/nestable/jquery.nestable.js') }}"></script>
+
+    <script>
+    $(document).ready(function () {
+        $('#tableExample2').DataTable({
+            "dom": "<'row'<'col-sm-6'l><'col-sm-6'f>>t<'row'<'col-sm-6'i><'col-sm-6'p>>",
+            "lengthMenu": [ [6, 25, 50, -1], [6, 25, 50, "Wszystko"] ],
+            "iDisplayLength": 6,
+
+            "fnRowCallback": function (nRow, aData, iDisplayIndex, iDisplayIndexFull) {
+
+
+            }
+        });
+
+        $(".select2_demo_2").select2({
+            placeholder: "Wybierz utworzoną stronę",
+            allowClear: true
+        });
+
+        $(".select2_demo_3").select2({
+            placeholder: "Wybierz utworzoną stronę",
+            allowClear: true
+        });
+
+        $('.popup_edit').editable({
+            ajaxOptions: {
+                dataType: 'json' //assuming json response
+            },
+            emptytext: 'Brak danych',
+            success: function(data, newValue) {
+                if(data.status == 0) {
+                    return data.msg; // Message will be shown in editable form
+                } else {
+                    setTimeout(function(){ // Run toastr notification with success message
+                            toastr.options = {
+                                "positionClass": "toast-top-right",
+                                "closeButton": true,
+                                "progressBar": true,
+                                "showEasing": "swing",
+                                "timeOut": "6000"
+                            };
+                            toastr.success('<strong>Sukces! </strong> <br/><small>' + data.msg + '</small>');
+                        },500
+                    );
+                }
+            }
+        });
+
+        // START NESTED LIST
+        // https://stackoverflow.com/questions/32255773/jquery-nestable-output-into-mysql-database
+        // GGL: nestable jquery send data ajax php
+        // Log for nestable list
+        var updateOutput = function (e) {
+            var list = e.length ? e : $(e.target),
+                output = list.data('output');
+            if (window.JSON) {
+                output.val(window.JSON.stringify(list.nestable('serialize')));//, null, 2));
+
+                $.post(
+                    '{{ base_url("back/setup/update_nestable") }}',
+                        {
+                            'output' : output.val()
+                        },
+                    function(data) {
+                        console.log('success')
+                    }
+                );
+            } else {
+                output.val('JSON browser support required for this demo.');
+            }
+        };
+
+        // Activate Nestable for list 1
+        $('#nestable').nestable({
+            group: 1,
+            maxDepth: 1
+        }).on('change', updateOutput);
+
+        // Output initial serialised data
+        updateOutput($('#nestable').data('output', $('#nestable-output')));
+        // END NESTED LIST
+
+    });
+
+    $(function () {
+        $('[data-toggle="tooltip"]').tooltip()
+    })
+</script>
+{% endblock %}

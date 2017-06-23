@@ -55,6 +55,10 @@ $(document).ready(function () {
         if(methodName === 'user') {
             $('#administration-user-menu').addClass('active');
         }
+    } else if(controlerName === 'setup') {
+        if (methodName === 'menu') {
+            $('#setup-menu-menu').addClass('active');
+        }
     } else if(controlerName === 'client') {
         $('#client-menu').addClass('active');
         $('#client-submenu').addClass('in');
