@@ -13,7 +13,7 @@ class Setup extends BACK_Controller {
     }
 
     public function menu() {
-        $this->data_back['pages'] = $this->page_m->order_by('pa_order', 'ASC')->get_all();
+        $this->data_back['pages'] = $this->page_m->where(array('pa_status' => 'Aktywna'))->order_by('pa_order', 'ASC')->get_all();
         $this->data_back['menu_items'] = $this->menu_m->order_by('me_order', 'ASC')->get_all();
 
         $this->twig->display('back/setup/menu_v', $this->data_back);

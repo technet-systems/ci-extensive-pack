@@ -74,7 +74,25 @@
                                         <td><a href="#" class="popup_edit" data-type="select" data-pk="{{ page.pa_id }}" data-url="{{ base_url('back/content/inline_update') }}" data-name="pa_status" data-source="[{'value':'Aktywna', 'text':'Aktywna'},{'value':'Nieaktywna', 'text':'Nieaktywna'}]" data-value="{{ page.pa_status }}">{{ page.pa_status }}</a></td>
                                         <td>
                                             <a href="{{ base_url('back/content/edit/' ~ page.pa_id) }}" class="btn btn-success btn-xs">Edytuj</a>
-                                            <a href="{{ base_url('back/content/delete/' ~ page.pa_id) }}" class="btn btn-danger btn-xs">Usuń</a>
+                                            <button type="button" class="btn btn-danger btn-xs" data-toggle="modal" data-target="#deletePage-{{ page.pa_id }}"><i class="fa fa-trash"></i> Usuń</button>
+
+                                            <div class="modal fade" id="deletePage-{{ page.pa_id }}" tabindex="-1" role="dialog" aria-hidden="true" style="display: none;">
+                                                <div class="modal-dialog modal-sm">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header text-center">
+                                                            <h4 class="modal-title">Usuwanie strony</h4>
+                                                            <h4>{{ page.pa_title }}</h4>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            <p><strong>Czy na pewno chcesz usunąć tą stronę? </strong></p>
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn btn-default" data-dismiss="modal">Anuluj</button>
+                                                            <a href="{{ base_url('back/content/delete/' ~ page.pa_id) }}" class="btn btn-danger">Usuń</a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </td>
                                     </tr>
                                     {% endfor %}

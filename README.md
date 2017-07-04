@@ -1,4 +1,4 @@
-# CodeIgniter 3.x Extensive Pack - ADMIN RELEASE
+# CodeIgniter 3.x Extensive Pack - CMS RELEASE
 
 ## Includes
 
@@ -20,7 +20,7 @@
     * [x] Sort menu items
 * Media
     * [ ] CRUD
-    * [ ] Adding to specific modules
+    * [ ] Adding to specific module
 
 ## Change log:
 
