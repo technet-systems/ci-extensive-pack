@@ -50,8 +50,8 @@
 
                                 <div class="tabs-left">
                                     <ul class="nav nav-tabs">
-                                        <li class="active"><a data-toggle="tab" href="#tab-6"> Wybór strony</a></li>
-                                        <li class=""><a data-toggle="tab" href="#tab-7">Własny odnośnik</a></li>
+                                        <li class="active"><a data-toggle="tab" href="#tab-6"> Istniejąca strona jako element menu</a></li>
+                                        <li class=""><a data-toggle="tab" href="#tab-7">Rozwijany element menu lub odnośnik</a></li>
                                     </ul>
                                     <div class="tab-content ">
                                         <div id="tab-6" class="tab-pane active">
@@ -163,31 +163,36 @@
                                 <div class="panel-body" style="display: none;">
 
                                     {{ form_open('back/setup/save_menu_item/' ~ menu_item.me_id, 'class="form-horizontal"') }}
-                                    <div class="form-group"><label for="me_title_alt" class="col-sm-2 control-label">Etykieta nawigacji <code>*</code></label>
-                                        <div class="col-sm-10">
+                                    <div class="form-group"><label for="me_title_alt" class="col-sm-3 control-label">Etykieta nawigacji <code>*</code></label>
+                                        <div class="col-sm-9">
                                             <input class="form-control" placeholder="Wpisz nową etykietę nawigacji" type="text" name="me_title_alt" value="{{ menu_item.me_title_alt }}" />
                                         </div>
                                     </div>
 
+                                    {% if menu_item.me_pa_slug == NULL %}
 
-
-                                    <div class="form-group"><label for="me_pa_slug" class="col-sm-2 control-label">Dostępne strony <code>*</code></label>
-                                        <div class="col-sm-10">
+                                    <div class="form-group"><label for="me_pa_slug" class="col-sm-3 control-label">Dostępne elementy podrzędne <code>*</code></label>
+                                        <div class="col-sm-9">
 
                                             <select class="select2_demo_3 form-control" multiple="multiple" style="width: 100%" name="pa_id[]">
                                                 {% for page in pages %}
-                                                <option value="{{ page.pa_id }}" {% if page.pa_parent_id == menu_item.me_id %} selected {% endif %}>{{ page.pa_title }}</option>
+
+                                                <option value="{{ page.pa_id }}" {% if page.pa_me_id == menu_item.me_id %} selected {% endif %}>{{ page.pa_title }}</option>
                                                 {% endfor %}
+
                                             </select>
 
                                         </div>
                                     </div>
+                                    {% endif %}
 
                                     <button type="submit" class="btn btn-success pull-right"><i class="fa fa-save"></i> Zapisz</button>
                                     <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteModule-{{ menu_item.me_id }}"><i class="fa fa-trash"></i> Usuń</button>
                                     {{ form_close() }}
 
                                     <div class="space-15"></div>
+
+                                    {% if menu_item.me_pa_slug == NULL %}
 
                                     <div class="row">
                                         <div class="col-xs-12">
@@ -196,30 +201,69 @@
                                                     <div class="panel-tools">
                                                         <a class="panel-toggle"><i class="fa fa-chevron-up"></i></a>
                                                     </div>
-                                                    Zarządzanie elementami podrzędnymi oraz zmiana ich kolejności
+                                                    Elementy podrzędne wybranego elementu menu
+                                                    <p><small class="text-muted">Możliwość edycji wyświetlanej nazwy elementu podrzędnego i jego kolejności</small></p>
                                                 </div>
                                                 <div class="panel-body">
                                                     <div class="row">
-                                                        <div class="col-xs-6">
-                                                            Tabelka z nazwami podrzędnych stron z inline-editem i opcją usunięcia
+                                                        <div class="col-xs-12">
+
+                                                            <div class="table-responsive">
+                                                                <table class="table table-hover table-striped table-bordered table-condensed">
+                                                                    <thead>
+                                                                        <tr>
+                                                                            <th>Nazwa strony wyświetlana w menu</th>
+                                                                            <th width="100">Kolejność</th>
+                                                                            <th width="100">Akcja</th>
+                                                                        </tr>
+                                                                    </thead>
+                                                                    <tbody>
+                                                                    {% for page in pages %}
+                                                                    {% if page.pa_me_id == menu_item.me_id %}
+
+                                                                        <tr>
+                                                                            <td><a href="#" class="popup_edit editable editable-click" data-type="text" data-pk="{{ page.pa_id }}" data-url="{{ base_url('back/setup/inline_update') }}" data-name="pa_title_alt">{{ page.pa_title_alt }}</a></td>
+                                                                            <td><a href="#" class="popup_edit editable editable-click" data-type="text" data-pk="{{ page.pa_id }}" data-url="{{ base_url('back/setup/inline_update') }}" data-name="pa_order">{{ page.pa_order }}</a></td>
+                                                                            <td><button type="button" class="btn btn-danger btn-xs" data-toggle="modal" data-target="#deleteMenuSubItem-{{ page.pa_id }}"><i class="fa fa-trash"></i> Usuń</button></td>
+                                                                        </tr>
+                                                                    {% endif %}
+                                                                    {% endfor %}
+                                                                    </tbody>
+                                                                </table>
+                                                            </div>
+
+                                                            {% for page in pages %}
+                                                            {% if page.pa_me_id == menu_item.me_id %}
+
+                                                            <div class="modal fade" id="deleteMenuSubItem-{{ page.pa_id }}" tabindex="-1" role="dialog" aria-hidden="true" style="display: none;">
+                                                                <div class="modal-dialog modal-sm">
+                                                                    <div class="modal-content">
+                                                                        <div class="modal-header text-center">
+                                                                            <h4 class="modal-title">Usuwanie elementu podrzędnego</h4>
+                                                                            <h4>{{ page.pa_title }}</h4>
+                                                                        </div>
+                                                                        <div class="modal-body">
+                                                                            <p><strong>Czy na pewno chcesz usunąć ten podrzędny element menu? </strong></p>
+                                                                        </div>
+                                                                        <div class="modal-footer">
+                                                                            <button type="button" class="btn btn-default" data-dismiss="modal">Anuluj</button>
+                                                                            <a href="{{ base_url('back/setup/delete_menu_sub_item/' ~ page.pa_id) }}" class="btn btn-danger">Usuń</a>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            {% endif %}
+                                                            {% endfor %}
+
                                                         </div>
 
-                                                        <div class="col-xs-6">
-                                                            Kolejność elementów podrzędnych
-                                                        </div>
                                                     </div>
                                                 </div>
-                                                <div class="panel-footer">Panel footer</div>
                                             </div>
                                         </div>
                                     </div>
-                                    FEATURE -> jakaś tabela z wykazem podrzędnych elementów tego elementu menu (z ew. opcjami na ich edycję) i/lub dodanie elementów (podstron) do tego wybranego elementu)<br />
-                                    USUWANIE -> trza pamiętać o tym, że jeśli usuniemy element nadrzędny to elementy podrzędne muszą automatycznie być usunięte z MENU (czyli mają mieć np. wartość NULL czy coś takiego)
 
-
-                                    <div>
-
-                                    </div>
+                                    {% endif %}
 
                                     <div class="modal fade" id="deleteModule-{{ menu_item.me_id }}" tabindex="-1" role="dialog" aria-hidden="true" style="display: none;">
                                         <div class="modal-dialog modal-sm">
@@ -243,52 +287,6 @@
                             </div>
                             {% endfor %}
 
-
-
-
-                            <!--
-                            {% for module in modules %}
-                            <div class="panel panel-filled panel-collapse">
-                                <div class="panel-heading">
-                                    <div class="panel-tools">
-                                        <a class="panel-toggle"><i class="fa fa-chevron-down"></i></a>
-                                    </div>
-                                    {{ module.mo_description }}
-                                </div>
-                                <div class="panel-body" style="display: none;">
-
-                                    {{ form_open('back/content/edit_module/' ~ module.mo_id, 'class="form-horizontal"') }}
-                                    {{ module.mo_form | raw }}
-                                    <input type="hidden" value="{{ module.mo_layout }}" name="mo_layout">
-                                    <input type="hidden" value="{{ module.mo_pa_id }}" name="mo_pa_id">
-                                    <div>
-                                        <button type="submit" class="btn btn-success pull-right"><i class="fa fa-save"></i> Zapisz</button>
-                                        <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteModule-{{ module.mo_id }}"><i class="fa fa-trash"></i> Usuń</button>
-                                    </div>
-                                    {{ form_close() }}
-
-                                    <div class="modal fade" id="deleteModule-{{ module.mo_id }}" tabindex="-1" role="dialog" aria-hidden="true" style="display: none;">
-                                        <div class="modal-dialog modal-sm">
-                                            <div class="modal-content">
-                                                <div class="modal-header text-center">
-                                                    <h4 class="modal-title">Usuwanie modułu</h4>
-                                                    <h4>{{ module.mo_description }}</h4>
-                                                </div>
-                                                <div class="modal-body">
-                                                    <p><strong>Czy na pewno chcesz usunąć moduł? </strong></p>
-                                                </div>
-                                                <div class="modal-footer">
-                                                    <button type="button" class="btn btn-default" data-dismiss="modal">Anuluj</button>
-                                                    <a href="{{ base_url('back/content/delete_module/' ~ module.mo_pa_id ~ '/' ~ module.mo_id) }}" class="btn btn-danger">Usuń</a>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                </div>
-                            </div>
-                            {% endfor %}
-                            -->
                         </div>
                     </div>
                 </div>

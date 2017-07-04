@@ -49,11 +49,25 @@ class Page_m extends MY_Model {
                     'rules' => 'trim|required'
                 ]
             ],
+            'pa_title_alt' => [
+                'pa_title_alt' => [
+                    'field' => 'pa_title_alt',
+                    'label' => 'Tytuł alternatywny',
+                    'rules' => 'trim|required'
+                ]
+            ],
             'pa_slug' => [
                 'pa_slug' => [
                     'field' => 'pa_slug',
                     'label' => 'Odnośnik',
                     'rules' => 'trim|required|is_unique[page.pa_slug]'
+                ]
+            ],
+            'pa_order' => [
+                'pa_order' => [
+                    'field' => 'pa_order',
+                    'label' => 'Kolejność',
+                    'rules' => 'trim|is_natural|required'
                 ]
             ],
             'pa_status' => [

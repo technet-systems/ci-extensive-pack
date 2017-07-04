@@ -19,7 +19,7 @@ class Content extends BACK_Controller {
         if($this->form_validation->run()) {
             $slug = $this->page_m->create_slug($this->input->post('pa_title'));
 
-            $this->page_m->from_form($rules, array('pa_slug' => $slug, 'pa_created_by' => $this->data_back['us_id']))->insert();
+            $this->page_m->from_form($rules, array('pa_title_alt' => $this->input->post('pa_title'), 'pa_slug' => $slug, 'pa_created_by' => $this->data_back['us_id']))->insert();
 
             $this->session->set_flashdata('success', 'Dodano nową stronę');
             redirect('back/content/page');

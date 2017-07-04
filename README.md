@@ -16,8 +16,8 @@
     * [x] Setting layouts
     * [x] Setting modules (depending on layouts)
 * Menu
-    * [ ] CRUD
-    * [ ] Sort menu items
+    * [x] CRUD
+    * [x] Sort menu items
 * Media
     * [ ] CRUD
     * [ ] Adding to specific modules

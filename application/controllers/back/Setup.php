@@ -13,7 +13,7 @@ class Setup extends BACK_Controller {
     }
 
     public function menu() {
-        $this->data_back['pages'] = $this->page_m->get_all();
+        $this->data_back['pages'] = $this->page_m->order_by('pa_order', 'ASC')->get_all();
         $this->data_back['menu_items'] = $this->menu_m->order_by('me_order', 'ASC')->get_all();
 
         $this->twig->display('back/setup/menu_v', $this->data_back);
@@ -32,12 +32,20 @@ class Setup extends BACK_Controller {
                 ), $me_id);
 
                 // Update 'parent_id' stron
-                $actual_pages = $this->page_m->where('pa_parent_id', $me_id)->get_all();
+                $actual_menu_items = $this->page_m->where('pa_me_id', $me_id)->get_all(); // Uzyskanie wszystkich stron z danym Parent ID (pa_me_id)
+
+                foreach ($actual_menu_items as $actual_menu_item) { // Ustawienie dla wybranych stron Parent ID (pa_me_id) na NULL
+                    $this->page_m->update(array(
+                        'pa_me_id' => NULL
+                    ), $actual_menu_item->pa_id);
+                }
+
+                //var_dump($actual_menu_items);die();
 
                 foreach ($_POST['pa_id'] as $key => $value) {
                     $this->page_m->update(array(
                         'pa_order' => $key,
-                        'pa_parent_id' => $me_id,
+                        'pa_me_id' => $me_id,
                         'pa_updated_by' => $this->data_back['us_id']
                     ), $value);
                 }
@@ -117,38 +125,12 @@ class Setup extends BACK_Controller {
 
     public function update_nestable() {
         $sorted_list = json_decode($_POST['output']);
+
         foreach ($sorted_list as $key => $value) {
             $this->menu_m->update(array('me_order' => $key), $value->id);
         }
+
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     public function inline_update() {
         // assignment of variables
@@ -164,9 +146,6 @@ class Setup extends BACK_Controller {
 
         // Validation process
         if($this->form_validation->run()) {
-            // Checking is the input field name is a password and setting the '$this->data_back['us_pass_temp']' to FALSE
-            $name != 'pa_slug' || $value = $this->page_m->create_slug($value);
-
             // Update the data
             $this->page_m->update(array(
                 $name => $value,
@@ -179,81 +158,17 @@ class Setup extends BACK_Controller {
         }
     }
 
-    public function delete($id) {
-        if(!is_int($id)) {
-            $this->page_m->delete($id);
-            $this->session->set_flashdata('success', 'Usunięto stronę');
-            redirect('back/content/page');
+    public function delete_menu_sub_item($pa_id) {
+        if(!is_int($pa_id)) {
+            $this->page_m->update(array(
+                'pa_me_id' => NULL,
+                'pa_updated_by' => $this->data_back['us_id']
+            ), $pa_id);
+            $this->session->set_flashdata('success', 'Usunięto podrzędny element z menu');
+            redirect('back/setup/menu');
         } else {
             $this->session->set_flashdata('error', 'Coś poszło nie tak');
-            redirect('back/content/page');
-        }
-    }
-
-    public function edit_module($mo_id) {
-        if(!is_int($mo_id)) {
-            if($_POST) {
-                $rules = $this->module_m->rules['update'][$_POST['mo_layout']];
-
-                $this->form_validation->set_rules($rules);
-
-                if($this->form_validation->run()) {
-                    $mo_variables = array();
-
-                    // Checking if the $_POST key starts with 'var'
-                    foreach ($_POST as $key => $value) {
-                        if(strpos($key, 'var') !== false) {
-                            $mo_variables[$key] = $value;
-
-                            unset($_POST[$key]);
-                        }
-                    }
-
-                    //var_dump($mo_variables);die();
-
-                    // json encode in order to store the variables in the DB
-                    $mo_variables = json_encode($mo_variables);
-
-                    //var_dump(json_decode($mo_variables), TRUE);die();
-
-                    $this->module_m->update(array(
-                        'mo_variables' =>  $mo_variables,
-                        'mo_form' => $this->module_m->create_editable_form($mo_variables, $_POST['mo_layout']),
-                        'mo_body' => $this->module_m->parse_form_to_html($mo_variables, $_POST['mo_layout']),
-                        'mo_description' => $_POST['mo_description'],
-                        'mo_updated_by' => $this->data_back['us_id']
-                    ), $mo_id);
-
-                    $this->session->set_flashdata('success', 'Zaktualizowano moduł');
-                    redirect('back/content/edit/' . $_POST['mo_pa_id']);
-                }
-            }
-
-            $this->data_back['page']    = $this->page_m->get($id);
-
-            $this->data_back['layouts'] = $this->page_m->get_layouts();
-
-            $this->data_back['forms']   = $this->page_m->get_forms();
-
-            $this->data_back['modules'] = $this->module_m->where('mo_pa_id', $id)->order_by('mo_order', 'ASC')->get_all();
-
-            //var_dump(json_decode($mo_variables));die();
-
-            $this->twig->display('back/content/page_edit_v', $this->data_back);
-        } else {
-            $this->session->set_flashdata('error', 'Nie znalazłem żądanego modułu');
-            redirect('back/content/page');
-        }
-    }
-
-    public function delete_module($mo_pa_id, $mo_id) {
-        if(!is_int($mo_id)) {
-            $this->module_m->delete($mo_id);
-            $this->session->set_flashdata('success', 'Usunięto moduł');
-            redirect('back/content/edit/' . $mo_pa_id);
-        } else {
-            $this->session->set_flashdata('error', 'Coś poszło nie tak');
-            redirect('back/content/edit/' . $mo_pa_id);
+            redirect('back/setup/menu');
         }
     }
 }
