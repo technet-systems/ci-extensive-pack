@@ -6,6 +6,9 @@ class Content extends BACK_Controller {
 
         $this->load->model('page_m');
         $this->load->model('module_m');
+        $this->load->model('file_m');
+
+        $this->load->library('image_lib');
 
         $this->data_back['layouts'] = get_filenames(APPPATH.'views/build/layout/');
     }
@@ -201,6 +204,102 @@ class Content extends BACK_Controller {
         } else {
             $this->session->set_flashdata('error', 'Coś poszło nie tak');
             redirect('back/content/edit/' . $mo_pa_id);
+        }
+    }
+
+    public function media() {
+        if($this->upload->do_upload('uploadedfiles')) {
+            // Uzyskanie nazwy pliku http://stackoverflow.com/questions/16345761/codeigniter-get-the-uploaded-file-name
+
+
+            // Returns array of containing all of the data related to the file you uploaded depends if there was uploaded only 1 file or more
+            // https://stackoverflow.com/questions/145337/checking-if-array-is-multidimensional-or-not
+            if(count($this->upload->data()) == count($this->upload->data(), COUNT_RECURSIVE)) {
+                // Dla uploadowanego 1 pliku tworzymy specjalnie tablicę wielowymiarową
+                $upload_files[0] = $this->upload->data();
+                $message = 'Dodano nowy plik';
+            } else {
+                // Dla większej ilości plików pozostawiamy tablicę bez zmian (bo dla 2 i więcej uploadowanych plików jest ona już domyślnie wielowymiarowa)
+                $upload_files = $this->upload->data();
+                $message = 'Dodano nowe pliki';
+            }
+
+            foreach ($upload_files as $upload_file) {
+                // Create thumb
+                // Używanie biblioteki do manipulacji zdjęciami w pętli foreach https://stackoverflow.com/questions/19218247/codeigniter-image-resize
+                $config['image_library']    = 'gd2';
+                $config['source_image']     = $upload_file['full_path'];
+                $config['create_thumb']     = TRUE;
+                $config['maintain_ratio']   = TRUE;
+                $config['width']            = 150;
+                $config['height']           = 150;
+
+                $this->image_lib->clear();
+                $this->image_lib->initialize($config);
+                $this->image_lib->resize();
+
+                $this->file_m->insert(array(
+                    'fi_name'       => $upload_file['raw_name'],
+                    'fi_name_thumb' => $upload_file['raw_name'] . '_thumb',
+                    'fi_orig_name'  => strtolower($upload_file['orig_name']),
+                    'fi_extension'  => strtolower($upload_file['file_ext']),
+                    'fi_type'       => $upload_file['image_type'],
+                    'fi_size'       => $upload_file['file_size'],
+                    'fi_width'      => $upload_file['image_width'],
+                    'fi_height'     => $upload_file['image_height'],
+                    'fi_created_by' => $this->data_back['us_id']
+                ));
+
+            }
+
+            $this->session->set_flashdata('success', $message);
+        } else {
+            $this->session->set_flashdata('error', $this->upload->display_errors());
+        }
+
+        $this->data_back['files'] = $this->file_m->order_by('fi_created_at', 'DESC')->get_all();
+
+        $this->twig->display('back/content/media_v', $this->data_back);
+    }
+
+    public function inline_update_media() {
+        // assignment of variables
+        $value  = $this->input->post('value');
+        $name   = $this->input->post('name');
+        $pk     = $this->input->post('pk');
+
+        // For proper rules check in '$this->form_validation->run()' method
+        $_POST[$name] = $value;
+
+        // Setting rules
+        $this->form_validation->set_rules($this->file_m->rules['inline-update'][$name]);
+
+        // Validation process
+        if($this->form_validation->run()) {
+            // Update the data
+            $this->file_m->update(array(
+                $name => $value,
+                'fi_updated_by' => $this->data_back['us_id']
+            ), $pk);
+            echo json_encode(array('status' => 1, 'msg' => 'Zmieniono dane'));
+        } else {
+            $this->form_validation->set_error_delimiters('', '');
+            echo json_encode(array('status' => 0, 'msg' => validation_errors()));
+        }
+    }
+
+    public function delete_media($fi_id, $fi_name, $fi_extension) {
+        if(!is_int($fi_id)) {
+            $this->file_m->delete($fi_id);
+
+            unlink('./uploads/' . $fi_name . $fi_extension);
+            unlink('./uploads/' . $fi_name . '_thumb' . $fi_extension);
+
+            $this->session->set_flashdata('success', 'Usunięto plik');
+            redirect('back/content/media');
+        } else {
+            $this->session->set_flashdata('error', 'Coś poszło nie tak');
+            redirect('back/content/media');
         }
     }
 }

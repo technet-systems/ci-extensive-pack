@@ -6,6 +6,17 @@ class BACK_Controller extends MY_Controller {
     public function __construct()
     {
         parent::__construct();
+
+        // Upload configuration
+        $config = array(
+            'upload_path' => './uploads/',
+            'allowed_types' => 'gif|jpg|png|pdf',
+            'max_size' => '2048',
+            'encrypt_name' => TRUE,
+            'multi' => 'all'
+        );
+        $this->load->library('upload', $config);
+
         // Adding global variable for display flash data in TWIG
         $this->twig->addGlobal('session', $this->session);
 

@@ -1,0 +1,266 @@
+{% extends "back_base_layout.twig" %}
+
+{% block vendor_stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ base_url('assets/back/vendor/datatables/datatables.min.css') }}"/>
+    <link rel="stylesheet" href="{{ base_url('assets/back/vendor/select2/dist/css/select2.min.css') }}"/>
+{% endblock %}
+
+{% block body %}
+    <section class="content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-lg-12">
+                    {{ validation_errors('<div class="panel panel-filled panel-c-danger"><div class="panel-heading">', '</div></div>') | raw}}
+
+                    {% if session.flashdata.error == TRUE %}
+                        <div class="panel panel-filled panel-c-danger"><div class="panel-heading">{{ session.flashdata.error | raw}}</div></div>
+                    {% elseif session.flashdata.success == TRUE %}
+                        <div class="panel panel-filled panel-c-success"><div class="panel-heading">{{ session.flashdata.success }}</div></div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="view-header">
+                        <div class="pull-right text-right" style="line-height: 14px">
+                            <small>Luna Admin Theme<br>Dashboard<br> <span class="c-white">v.1.3</span></small>
+                        </div>
+                        <div class="header-icon">
+                            <i class="pe page-header-icon pe-7s-file"></i>
+                        </div>
+                        <div class="header-title">
+                            <h3 class="m-b-xs">Zawartość | <span class="text-muted">Media</span></h3>
+                            <small>
+                                Możliwość przeglądania przesłanych plików oraz dodawania nowych
+                            </small>
+                        </div>
+                    </div>
+                    <hr>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="panel panel-filled">
+                        <div class="panel-heading">
+                            <div class="panel-tools">
+                                <button class="btn btn-w-md btn-success" data-toggle="modal" data-target="#modalADD">Dodaj plik</button>
+                            </div>
+                            Przegląd plików z podziałem na ich typ
+
+                        </div>
+                        <div class="panel-body">
+                            <p>
+                                Wskazówka: można dodać jakiś tekst
+                            </p>
+
+                            <div class="tabs-container">
+
+                                <div class="tabs-left">
+                                    <ul class="nav nav-tabs">
+                                        <li class="active"><a data-toggle="tab" href="#tab-1"> Obrazy</a></li>
+                                        <li class=""><a data-toggle="tab" href="#tab-2"> Dokumenty</a></li>
+                                    </ul>
+                                    <div class="tab-content ">
+                                        <div id="tab-1" class="tab-pane active">
+                                            <div class="panel-body">
+                                                <strong class="c-white">Lorem ipsum dolor sit amet, consectetuer adipiscing</strong>
+
+                                                <div class="space-20"></div>
+
+                                                <div class="container">
+                                                    <div class="row">
+                                                        {% set counter = 0 %}
+                                                        {% for file in files %}
+
+                                                        {% if file.fi_extension != '.pdf' %}
+
+                                                        <div class="col-xs-3">
+                                                            <div class="panel">
+                                                                <div class="panel-body">
+                                                                    <div class="btn-group pull-right m-b-md">
+                                                                        <a href="{{ base_url('back/content/delete_media/' ~ file.fi_id ~ '/' ~ file.fi_name ~ '/' ~ file.fi_extension) }}" class="c-danger" onclick="return confirm('Usunąć plik?');"><i class="fa fa-trash"></i></a>
+                                                                    </div>
+                                                                    <img src="{{ base_url('uploads/' ~ file.fi_name_thumb ~ file.fi_extension) }}" class="img-responsive" />
+                                                                    <h5 class="m-b-none"><span class="c-accent"> {{ file.fi_name | slice(0,15) ~ '...' }} </span></h5>
+                                                                    <div class="m-b-xs c-white small">Identyfikator pliku</div>
+                                                                    <h5 class="m-b-none"><span class="c-accent"> {{ file.fi_orig_name }} </span></h5>
+                                                                    <div class="m-b-xs c-white small">Oryginalna nazwa pliku</div>
+                                                                    <h5 class="m-b-none"><a href="#" class="popup_edit" data-type="text" data-pk="{{ file.fi_id }}" data-url="{{ base_url('back/content/inline_update_media') }}" data-name="fi_alt"> {{ file.fi_alt }} </a></h5>
+                                                                    <div class="m-b-xs c-white small">Alternatywny tekst</div>
+                                                                    <h5 class="m-b-none"><a href="#" class="popup_edit" data-type="textarea" data-pk="{{ file.fi_id }}" data-url="{{ base_url('back/content/inline_update_media') }}" data-name="fi_description"> {{ file.fi_description }} </a></h5>
+                                                                    <div class="m-b-xs c-white small">Opis pliku</div>
+                                                                    <h5 class="m-b-none"><a href="#" class="popup_edit" data-type="text" data-pk="{{ file.fi_id }}" data-url="{{ base_url('back/content/inline_update_media') }}" data-name="fi_label"> {{ file.fi_label }} </a></h5>
+                                                                    <div class="m-b-xs c-white small">Etykieta</div>
+
+                                                                    <hr />
+
+                                                                    <small><i class="fa fa-file"></i> <b>Typ:</b> <span class="pull-right">{{ file.fi_extension }}</span></small><br />
+                                                                    <small><i class="fa fa-save"></i> <b>Wielkość:</b> <span class="pull-right">{{ file.fi_size }} KB</span></small><br />
+                                                                    <small><i class="fa fa-arrows-alt"></i> <b>Wymiary:</b> <span class="pull-right">{{ file.fi_width }}x{{ file.fi_height }}</span></small><br />
+                                                                    <small><i class="fa fa-clock-o"></i> <b>Wysłano:</b> <span class="pull-right">{{ file.fi_created_at }}</span></small>
+
+                                                                </div>
+
+                                                            </div>
+                                                        </div>
+
+                                                        {% set counter = counter + 1 %}
+
+                                                        {% if counter == 4 %}
+                                                        {% set counter = 0 %}
+
+                                                        <div class="space-25 clearfix"></div>
+
+                                                        {% endif %}
+                                                        {% endif %}
+                                                        {% endfor %}
+
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                        </div>
+
+                                        <div id="tab-2" class="tab-pane">
+                                            <div class="panel-body">
+                                                <strong class="c-white">Lorem ipsum dolor sit amet, consectetuer adipiscing</strong>
+
+                                                <div class="space-20"></div>
+
+                                                <div class="container">
+                                                    <div class="row">
+                                                        {% set counter = 0 %}
+                                                        {% for file in files %}
+
+                                                            {% if file.fi_extension == '.pdf' %}
+
+                                                                <div class="col-xs-3">
+                                                                    <div class="panel">
+                                                                        <div class="panel-body">
+                                                                            <div class="btn-group pull-right m-b-md">
+                                                                                <a href="{{ base_url('back/content/delete_media/' ~ file.fi_id ~ '/' ~ file.fi_name ~ '/' ~ file.fi_extension) }}" class="c-danger" onclick="return confirm('Usunąć plik?');"><i class="fa fa-trash"></i></a>
+                                                                            </div>
+                                                                            <a href="{{ base_url('uploads/' ~ file.fi_name ~ file.fi_extension) }}" target="_blank"><i class="fa fa-file-pdf-o fa-5x"></i></a>
+                                                                            <h5 class="m-b-none"><span class="c-accent"> {{ file.fi_name | slice(0,15) ~ '...' }} </span></h5>
+                                                                            <div class="m-b-xs c-white small">Identyfikator pliku</div>
+                                                                            <h5 class="m-b-none"><span class="c-accent"> {{ file.fi_orig_name }} </span></h5>
+                                                                            <div class="m-b-xs c-white small">Oryginalna nazwa pliku</div>
+                                                                            <h5 class="m-b-none"><a href="#" class="popup_edit" data-type="text" data-pk="{{ file.fi_id }}" data-url="{{ base_url('back/content/inline_update_media') }}" data-name="fi_alt"> {{ file.fi_alt }} </a></h5>
+                                                                            <div class="m-b-xs c-white small">Alternatywny tekst</div>
+                                                                            <h5 class="m-b-none"><a href="#" class="popup_edit" data-type="textarea" data-pk="{{ file.fi_id }}" data-url="{{ base_url('back/content/inline_update_media') }}" data-name="fi_description"> {{ file.fi_description }} </a></h5>
+                                                                            <div class="m-b-xs c-white small">Opis pliku</div>
+                                                                            <h5 class="m-b-none"><a href="#" class="popup_edit" data-type="text" data-pk="{{ file.fi_id }}" data-url="{{ base_url('back/content/inline_update_media') }}" data-name="fi_label"> {{ file.fi_label }} </a></h5>
+                                                                            <div class="m-b-xs c-white small">Etykieta</div>
+
+                                                                            <hr />
+
+                                                                            <small><i class="fa fa-file"></i> <b>Typ:</b> <span class="pull-right">{{ file.fi_extension }}</span></small><br />
+                                                                            <small><i class="fa fa-save"></i> <b>Wielkość:</b> <span class="pull-right">{{ file.fi_size }} KB</span></small><br />
+                                                                            <small><i class="fa fa-arrows-alt"></i> <b>Wymiary:</b> <span class="pull-right">BRAK</span></small><br />
+                                                                            <small><i class="fa fa-clock-o"></i> <b>Wysłano:</b> <span class="pull-right">{{ file.fi_created_at }}</span></small>
+
+                                                                        </div>
+
+                                                                    </div>
+                                                                </div>
+
+                                                                {% set counter = counter + 1 %}
+
+                                                                {% if counter == 4 %}
+                                                                    {% set counter = 0 %}
+
+                                                                    <div class="space-25 clearfix"></div>
+
+                                                                {% endif %}
+                                                            {% endif %}
+                                                        {% endfor %}
+
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="modal fade" id="modalADD" role="dialog" aria-hidden="true" style="display: none;">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header text-center">
+                    <h4 class="modal-title">Nowy plik</h4>
+                    <small>Dodaj plik lub pliki</small>
+                </div>
+                {{ form_open_multipart('back/content/media', 'class="form-horizontal"') }}
+                <div class="modal-body">
+
+                    <div class="form-group"><label for="pa_title" class="col-sm-4 control-label">Wybierz plik(i) <code>*</code></label>
+                        <div class="col-sm-8">
+                            {{ form_upload('uploadedfiles[]','','multiple class="btn btn-default"') }}
+                        </div>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Anuluj</button>
+                    <input type="submit" class="btn btn-accent" value="Dodaj">
+                </div>
+                {{ form_close() }}
+
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block vendor_scripts %}
+    {{ parent() }}
+    <script src="{{ base_url('assets/back/vendor/datatables/datatables.min.js') }}"></script>
+    <script src="{{ base_url('assets/back/vendor/select2/dist/js/select2.js') }}"></script>
+
+    <script>
+    $(document).ready(function () {
+        $('.popup_edit').editable({
+            ajaxOptions: {
+                dataType: 'json' //assuming json response
+            },
+            emptytext: 'Brak danych',
+            success: function(data, newValue) {
+                if(data.status == 0) {
+                    return data.msg; // Message will be shown in editable form
+                } else {
+                    setTimeout(function(){ // Run toastr notification with success message
+                            toastr.options = {
+                                "positionClass": "toast-top-right",
+                                "closeButton": true,
+                                "progressBar": true,
+                                "showEasing": "swing",
+                                "timeOut": "6000"
+                            };
+                            toastr.success('<strong>Sukces! </strong> <br/><small>' + data.msg + '</small>');
+                        },500
+                    );
+                }
+            }
+        });
+
+        $(".select2_demo_1").select2();
+    });
+
+    $(function () {
+        $('[data-toggle="tooltip"]').tooltip()
+    })
+</script>
+{% endblock %}
