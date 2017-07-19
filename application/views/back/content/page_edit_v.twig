@@ -259,6 +259,7 @@
     <script>
     $(document).ready(function () {
 
+/*
         // START ADD IMAGES TO HIDDEN INPUT
 
         // For new module
@@ -363,15 +364,39 @@
         });
         // END DELETE AN EXISTING IMAGE FROM EDITED MODULE FORM
 
+*/
 
+        /**
+         * Nawigacja dla nowych (<1>) i utworzonych (<2>) (przeznaczonych do edycji) modułów
+         */
 
-        // START TEST
-        $('[data-module-value]').click(function () {
-            var $data_module_value = $(this).attr('data-module-value');
+        /**
+         * <1> Dla nowych modułów
+         */
 
+        // <1A> Dodanie nowego pola do wyboru pliku i dodanie klasy 'disabled' do tego przycisku
+        $('[data-add-id]').click(function () {
+            var random_number;
 
+            random_number = Math.floor(Math.random() * (9999999999 - 1000000000 + 1)) + 1000000000;
+
+            $(this).parent().prepend('<div class="form-group" data-form-group-id="1499682598' + random_number + '"><label for="var-image" class="col-sm-3 control-label">Wybierz plik <code>*</code></label><div class="col-sm-9"><a href="#" class="btn btn-w-md btn-success modal-image-picker" data-toggle="modal" data-target="#modalADDpicture" data-button-id="1499682598' + random_number + '">Wybierz plik</a> <a href="#" class="btn btn-w-md btn-default" data-cancel-id="1499682598' + random_number + '">Anuluj</a><input type="hidden" name="var-image[]" id="{{ var-image }}" value="" data-input-id="1499682598' + random_number + '"></div></div>');
+
+            $(this).addClass('disabled');
+
+            $('modal-image-picker').click(function () {
+                var data_button_id = $(this).attr('data-button-id');
+
+                $(".pick-image").bind('click', function() {
+                    var id = this.id;
+                    $('[data-input-id=' + data_button_id + ']').attr('value', id);
+                    $('[data-button-id=' + data_button_id + ']').text(id);
+
+                    data_button_id = 'undefined';
+
+                });
+            });
         });
-        // END TEST
 
         $(".select2_demo_1").select2();
 
