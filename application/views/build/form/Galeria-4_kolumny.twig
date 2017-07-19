@@ -1,11 +1,11 @@
 <p><strong class="c-white">Galeria podzielona na 4 kolumny</strong></p>
 <p><small>Pola oznaczone <code>*</code> są obowiązkowe</small></p>
-{% set random_number = random() %}
-<div class="row" data-module-id="1499682598{{ random_number }}">
+
+<div class="row">
     <div class="col-sm-12">
         <!-- dynamic -->
         <!--
-
+        {% set random_number = random() %}
         <div class="form-group" data-form-group-id="1499682598{{ random_number }}"><label for="var-image" class="col-sm-3 control-label">Plik w galerii</label>
             <div class="col-sm-9">
                 <img src={{ base_url('uploads/<< fi_name_thumb >><< fi_extension >>') }} class="img-responsive" style="display: inline-block;">
