@@ -108,8 +108,6 @@ class Content extends BACK_Controller {
 
             }
 
-            $this->data_back['test'] = $this->module_m->get(28);
-
             $this->data_back['page']    = $this->page_m->get($id);
 
             $this->data_back['layouts'] = $this->page_m->get_layouts();
@@ -244,17 +242,18 @@ class Content extends BACK_Controller {
                 }
             }
 
-            $this->data_back['page']    = $this->page_m->get($id);
+            /*
+            $this->data_back['page']    = $this->page_m->get($_POST['mo_pa_id']);
 
             $this->data_back['layouts'] = $this->page_m->get_layouts();
 
             $this->data_back['forms']   = $this->page_m->get_forms();
 
-            $this->data_back['modules'] = $this->module_m->where('mo_pa_id', $id)->order_by('mo_order', 'ASC')->get_all();
-
-            //var_dump(json_decode($mo_variables));die();
+            $this->data_back['modules'] = $this->module_m->where('mo_pa_id', $_POST['mo_pa_id'])->order_by('mo_order', 'ASC')->get_all();
 
             $this->twig->display('back/content/page_edit_v', $this->data_back);
+            */
+            $this->edit($_POST['mo_pa_id']);
         } else {
             $this->session->set_flashdata('error', 'Nie znalazłem żądanego modułu');
             redirect('back/content/page');
