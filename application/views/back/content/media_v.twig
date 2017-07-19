@@ -92,8 +92,10 @@
                                                                     <div class="m-b-xs c-white small">Alternatywny tekst</div>
                                                                     <h5 class="m-b-none"><a href="#" class="popup_edit" data-type="textarea" data-pk="{{ file.fi_id }}" data-url="{{ base_url('back/content/inline_update_media') }}" data-name="fi_description"> {{ file.fi_description }} </a></h5>
                                                                     <div class="m-b-xs c-white small">Opis pliku</div>
+                                                                    <h5 class="m-b-none"><a href="#" class="popup_edit" data-type="text" data-pk="{{ file.fi_id }}" data-url="{{ base_url('back/content/inline_update_media') }}" data-name="fi_label_alt"> {{ file.fi_label_alt }} </a></h5>
+                                                                    <div class="m-b-xs c-white small">Etykiety (wiele słów oddzielonych spacją)</div>
                                                                     <h5 class="m-b-none"><a href="#" class="popup_edit" data-type="text" data-pk="{{ file.fi_id }}" data-url="{{ base_url('back/content/inline_update_media') }}" data-name="fi_label"> {{ file.fi_label }} </a></h5>
-                                                                    <div class="m-b-xs c-white small">Etykieta</div>
+                                                                    <div class="m-b-xs c-white small"><code>*</code> Etykieta wiodąca (jedno słowo)</div>
 
                                                                     <hr />
 
@@ -152,8 +154,10 @@
                                                                             <div class="m-b-xs c-white small">Alternatywny tekst</div>
                                                                             <h5 class="m-b-none"><a href="#" class="popup_edit" data-type="textarea" data-pk="{{ file.fi_id }}" data-url="{{ base_url('back/content/inline_update_media') }}" data-name="fi_description"> {{ file.fi_description }} </a></h5>
                                                                             <div class="m-b-xs c-white small">Opis pliku</div>
+                                                                            <h5 class="m-b-none"><a href="#" class="popup_edit" data-type="text" data-pk="{{ file.fi_id }}" data-url="{{ base_url('back/content/inline_update_media') }}" data-name="fi_label_alt"> {{ file.fi_label_alt }} </a></h5>
+                                                                            <div class="m-b-xs c-white small">Etykiety (wiele słów oddzielonych spacją)</div>
                                                                             <h5 class="m-b-none"><a href="#" class="popup_edit" data-type="text" data-pk="{{ file.fi_id }}" data-url="{{ base_url('back/content/inline_update_media') }}" data-name="fi_label"> {{ file.fi_label }} </a></h5>
-                                                                            <div class="m-b-xs c-white small">Etykieta</div>
+                                                                            <div class="m-b-xs c-white small"><code>*</code> Etykieta wiodąca (jedno słowo)</div>
 
                                                                             <hr />
 
@@ -202,7 +206,7 @@
             <div class="modal-content">
                 <div class="modal-header text-center">
                     <h4 class="modal-title">Nowy plik</h4>
-                    <small>Dodaj plik lub pliki</small>
+                    <small>Dodaj plik</small>
                 </div>
                 {{ form_open_multipart('back/content/media', 'class="form-horizontal"') }}
                 <div class="modal-body">

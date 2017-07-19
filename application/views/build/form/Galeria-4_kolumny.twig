@@ -1,0 +1,32 @@
+<p><strong class="c-white">Galeria podzielona na 4 kolumny</strong></p>
+<p><small>Pola oznaczone <code>*</code> są obowiązkowe</small></p>
+{% set random_number = random() %}
+<div class="row" data-module-id="1499682598{{ random_number }}">
+    <div class="col-sm-12">
+        <!-- dynamic -->
+        <!--
+
+        <div class="form-group" data-form-group-id="1499682598{{ random_number }}"><label for="var-image" class="col-sm-3 control-label">Plik w galerii</label>
+            <div class="col-sm-9">
+                <img src={{ base_url('uploads/<< fi_name_thumb >><< fi_extension >>') }} class="img-responsive" style="display: inline-block;">
+                <a href="#" class="btn btn-w-md btn-danger" data-cancel-id="1499682598{{ random_number }}">Usuń</a>
+                <input type="hidden" name="var-image[]" id="<< fi_name >><< fi_extension >>" value="" data-input-id="1499682598{{ random_number }}">
+            </div>
+        </div>
+        -->
+        <!-- dynamic -->
+        <div class="new-field"></div>
+
+        <div class="form-group" data-block-id="1499682560{{ random_number }}"><label class="col-sm-3 control-label">Dodaj plik? </label>
+            <div class="col-sm-9">
+                <a href="#" class="btn btn-w-md btn-accent add_new_pick_image_field" data-add-id="1499682560{{ random_number }}"><i class="fa fa-plus"></i></a>
+            </div>
+        </div>
+
+        <hr />
+
+        <div class="form-group"><label for="mo_description" class="col-sm-3 control-label">Własny opis modulu <code>*</code></label>
+            <div class="col-sm-9"><input type="text" name="mo_description" class="form-control" id="{{ mo_description }}" placeholder="Np. Zapisanie do newslettera"></div>
+        </div>
+    </div>
+</div>

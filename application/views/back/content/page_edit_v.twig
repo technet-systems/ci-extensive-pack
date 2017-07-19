@@ -66,7 +66,7 @@
                                             <div id="tab-{{ counter }}" class="tab-pane {% if counter == 0 %}active{% endif %}">
                                                 <div class="panel-body">
                                                     {{ form_open('', 'class="form-horizontal"') }}
-                                                    {{ form | raw }}
+                                                    {{ include(template_from_string(form)) }}
                                                     <input type="hidden" value="{{ key }}" name="mo_layout">
                                                     <button type="submit" class="btn btn-success pull-right" id="submit"><i class="fa fa-save"></i> Zapisz</button>
                                                     {{ form_close() }}
@@ -80,6 +80,52 @@
                                 </div>
 
                             </div>
+                        </div>
+                    </div>
+                </div>
+
+
+
+                <div class="modal fade" id="modalADDpicture" role="dialog" aria-hidden="true" style="display: none;">
+                    <div class="modal-dialog modal-lg">
+                        <div class="modal-content">
+                            <div class="modal-header text-center">
+                                <h4 class="modal-title">Wybierz plik</h4>
+                                <small>Zaznacz plik do dodania</small>
+                            </div>
+                            <form action="{{ base_url('back/content/media') }}" class="form-horizontal" enctype="multipart/form-data" method="post" accept-charset="utf-8">
+
+                                <div class="modal-body">
+
+                                    <div class="row">
+                                        {% set counter = 0 %}
+                                        {% for file in files %}
+                                        {% if file.fi_extension != '.pdf' %}
+
+                                        <div class="col-xs-2">
+                                            <a href="#"><img src="{{ base_url('uploads/' ~ file.fi_name_thumb ~ file.fi_extension) }}" class="img-responsive pick-image" id="{{ file.fi_name ~ file.fi_extension }}" data-image-id="{{ file.fi_name }}" data-dismiss="modal"/></a>
+                                        </div>
+
+                                        {% set counter = counter + 1 %}
+
+                                        {% if counter == 6 %}
+                                        {% set counter = 0 %}
+
+                                        <div class="space-25 clearfix"></div>
+
+                                        {% endif %}
+
+                                        {% endif %}
+                                        {% endfor %}
+
+                                    </div>
+
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-accent" data-dismiss="modal">OK</button>
+                                </div>
+                            </form>
+
                         </div>
                     </div>
                 </div>
@@ -136,7 +182,7 @@
                                 <div class="panel-body" style="display: none;">
 
                                     {{ form_open('back/content/edit_module/' ~ module.mo_id, 'class="form-horizontal"') }}
-                                    {{ module.mo_form | raw }}
+                                    {{ include(template_from_string(module.mo_form)) }}
                                     <input type="hidden" value="{{ module.mo_layout }}" name="mo_layout">
                                     <input type="hidden" value="{{ module.mo_pa_id }}" name="mo_pa_id">
                                     <div>
@@ -212,16 +258,120 @@
 
     <script>
     $(document).ready(function () {
-        $('#tableExample2').DataTable({
-            "dom": "<'row'<'col-sm-6'l><'col-sm-6'f>>t<'row'<'col-sm-6'i><'col-sm-6'p>>",
-            "lengthMenu": [ [6, 25, 50, -1], [6, 25, 50, "Wszystko"] ],
-            "iDisplayLength": 6,
 
-            "fnRowCallback": function (nRow, aData, iDisplayIndex, iDisplayIndexFull) {
+        // START ADD IMAGES TO HIDDEN INPUT
 
+        // For new module
+        $('.modal-image-picker').click(function(){
+            var data_button_id = $(this).attr('data-button-id');
 
-            }
+            $('.pick-image').click(function () {
+                var id = $(this).attr('id');
+                $('[data-input-id=' + data_button_id + ']').attr('value', id);
+                $('[data-button-id=' + data_button_id + ']').text(id);
+            });
         });
+
+        // For edited module
+        $('.modal-image-picker').click(function(){
+            var data_button_value = $(this).attr('data-button-value');
+
+            $(".pick-image").bind('click', function() {
+                var id = this.id;
+                $('[data-input-value=' + data_button_value + ']').attr('value', id);
+                $('[data-button-value=' + data_button_value + ']').text(id);
+
+                data_button_value = 'undefined';
+            });
+        });
+
+
+        // Preview choosen picture in modal view for existing module
+        $('[data-button-value]').click(function() {
+            var data_button_value;
+            var value;
+            var data_image_id;
+            data_button_value = $(this).attr('data-button-value');
+            value = $('[data-input-value=' + data_button_value + ']').attr('value');
+            data_image_id = value.split('.')[0];
+            $('.pick-image').removeClass('img-thumbnail');
+            $('[data-image-id=' + data_image_id + ']').addClass('img-thumbnail');
+        });
+
+        // Preview choosen picture in modal view for new module
+        $('[data-button-id]').click(function() {
+            var data_button_id;
+            var value;
+            var data_image_id;
+            data_button_id = $(this).attr('data-button-id');
+            value = $('[data-input-id=' + data_button_id + ']').attr('value');
+            data_image_id = value.split('.')[0];
+            $('.pick-image').removeClass('img-thumbnail');
+            $('[data-image-id=' + data_image_id + ']').addClass('img-thumbnail');
+        });
+
+        // END ADD IMAGES TO HIDDEN INPUT
+
+        // START ADD NEW PICK IMAGE FIELD
+        $('.add_new_pick_image_field').click(function() {
+
+            var $add_new_pick_image_field = $(this);
+
+            $add_new_pick_image_field.addClass('disabled');
+
+            var random_number;
+
+            random_number = Math.floor(Math.random() * (9999999999 - 1000000000 + 1)) + 1000000000;
+
+            $('.new-field').append('<div class="form-group" data-form-group-id="1499682598' + random_number + '"><label for="var-image" class="col-sm-3 control-label">Wybierz plik <code>*</code></label><div class="col-sm-9"><a href="#" class="btn btn-w-md btn-success modal-image-picker" data-toggle="modal" data-target="#modalADDpicture" data-button-id="1499682598' + random_number + '">Dodaj plik</a> <a href="#" class="btn btn-w-md btn-default" data-cancel-id="1499682598' + random_number + '">Anuluj</a><input type="hidden" name="var-image[]" id="{{ var-image }}" value="" data-input-id="1499682598' + random_number + '"></div></div>');
+
+            // Usunięcie innych pojawiąjących się
+
+            $('.modal-image-picker').click(function(){
+                var data_button_id = $(this).attr('data-button-id');
+
+                $(".pick-image").bind('click', function() {
+                    var id = this.id;
+                    $('[data-input-id=' + data_button_id + ']').attr('value', id);
+                    $('[data-button-id=' + data_button_id + ']').text(id);
+
+                    data_button_id = 'undefined';
+
+                    $add_new_pick_image_field.removeClass('disabled');
+                });
+            });
+
+            $('[data-cancel-id]').click(function() {
+                var data_cancel_id;
+                data_cancel_id = $(this).attr('data-cancel-id');
+                $('[data-form-group-id=' + data_cancel_id + ']').remove();
+
+                return false;
+            });
+
+            return false;
+        });
+        // END ADD NEW PICK IMAGE FIELD
+
+        // START DELETE AN EXISTING IMAGE FROM EDITED MODULE FORM
+        $('[data-cancel-value]').click(function() {
+            var data_cancel_value;
+            data_cancel_value = $(this).attr('data-cancel-value');
+            $('[data-form-group-value=' + data_cancel_value + ']').remove();
+
+            return false;
+        });
+        // END DELETE AN EXISTING IMAGE FROM EDITED MODULE FORM
+
+
+
+        // START TEST
+        $('[data-module-value]').click(function () {
+            var $data_module_value = $(this).attr('data-module-value');
+
+
+        });
+        // END TEST
 
         $(".select2_demo_1").select2();
 

@@ -31,34 +31,6 @@ class File_m extends MY_Model {
      * @var array
      */
     public $rules = [
-        'create' => [
-            'nav-site' => [
-                'me_pa_slug' => [
-                    'field' => 'me_pa_slug',
-                    'label' => 'Odnośnik',
-                    'rules' => 'trim|required'
-                ]
-            ],
-            'nav-anchor' => [
-                'me_link' => [
-                    'field' => 'me_link',
-                    'label' => 'Adres odnośnika',
-                    'rules' => 'trim|required'
-                ],
-                'me_title' => [
-                    'field' => 'me_title',
-                    'label' => 'Nazwa odnośnika',
-                    'rules' => 'trim|required'
-                ]
-            ]
-        ],
-        'update' => [
-            'me_title_alt' => [
-                'field' => 'me_title_alt',
-                'label' => 'Etykieta nawigacji',
-                'rules' => 'trim|required'
-            ]
-        ],
         'inline-update' => [
             'fi_alt' => [
                 'fi_alt' => [
@@ -77,7 +49,14 @@ class File_m extends MY_Model {
             'fi_label' => [
                 'fi_label' => [
                     'field' => 'fi_label',
-                    'label' => 'Etykieta',
+                    'label' => 'Etykieta wiodąca',
+                    'rules' => 'trim'
+                ]
+            ],
+            'fi_label_alt' => [
+                'fi_label' => [
+                    'field' => 'fi_label_alt',
+                    'label' => 'Etykiety',
                     'rules' => 'trim'
                 ]
             ]

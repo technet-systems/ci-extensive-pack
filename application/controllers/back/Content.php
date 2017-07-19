@@ -37,48 +37,84 @@ class Content extends BACK_Controller {
     public function edit($id) {
         if(!is_int($id)) {
             if($_POST) {
-                $rules = $this->module_m->rules['create'][$_POST['mo_layout']];
+                // Check for the particular module name
+                $check_module_name = explode('-', $_POST['mo_layout']);
 
-                $this->form_validation->set_rules($rules);
+                if($check_module_name[0] == 'Galeria') {
+                    $rules = $this->module_m->rules['create'][$_POST['mo_layout']];
 
-                if($this->form_validation->run()) {
-                    $mo_variables = array();
+                    $this->form_validation->set_rules($rules);
 
-                    // Checking if the $_POST key starts with 'var'
-                    foreach ($_POST as $key => $value) {
-                        if(strpos($key, 'var') !== false) {
-                            $mo_variables[$key] = $value;
+                    if($this->form_validation->run()) {
 
-                            unset($_POST[$key]);
+                        $var_images = $_POST['var-image'];
+                        $files = array();
+                        foreach ($var_images as $key => $value) {
+                            $value = explode('.', $value); // Odseparowanie nazwy pliku od rozszerzenia
+                            $files[$key] = $this->file_m->where('fi_name', $value[0])->as_array()->get();
                         }
+
+                        $this->module_m->insert(array(
+                            'mo_variables' => json_encode($files), // json encode in order to store the files in the DB
+                            'mo_form' => $this->module_m->create_dynamic_editable_form($files, $_POST['mo_layout']),
+                            'mo_layout' => $_POST['mo_layout'],
+                            'mo_body' => $this->module_m->parse_dynamic_form_to_html($files, $_POST['mo_layout']),
+                            'mo_description' => $_POST['mo_description'],
+                            'mo_order' => $this->module_m->count_modules($_POST['mo_layout'], $id),
+                            'mo_created_by' => $this->data_back['us_id'],
+                            'mo_pa_id' => $id
+                        ));
+
+                        $this->session->set_flashdata('success', 'Dodano nowy moduł');
+                        redirect('back/content/edit/' . $id);
+
                     }
+                } else {
+                    $rules = $this->module_m->rules['create'][$_POST['mo_layout']];
 
-                    //var_dump($mo_variables);die();
+                    $this->form_validation->set_rules($rules);
 
-                    // json encode in order to store the variables in the DB
-                    $mo_variables = json_encode($mo_variables);
+                    if($this->form_validation->run()) {
+                        $mo_variables = array(); // Tablica na zmienne z formularza modułu
 
-                    //var_dump(json_decode($mo_variables), TRUE);die();
+                        // Checking if the $_POST key starts with 'var'
+                        foreach ($_POST as $key => $value) {
+                            if(strpos($key, 'var') !== false) {
+                                $mo_variables[$key] = $value;
 
-                    $this->module_m->insert(array(
-                        'mo_variables' =>  $mo_variables,
-                        'mo_form' => $this->module_m->create_editable_form($mo_variables, $_POST['mo_layout']),
-                        'mo_layout' => $_POST['mo_layout'],
-                        'mo_body' => $this->module_m->parse_form_to_html($mo_variables, $_POST['mo_layout']),
-                        'mo_description' => $_POST['mo_description'],
-                        'mo_order' => $this->module_m->count_modules($_POST['mo_layout'], $id),
-                        'mo_created_by' => $this->data_back['us_id'],
-                        'mo_pa_id' => $id
-                    ));
+                                unset($_POST[$key]);
+                            }
+                        }
 
-                    $this->session->set_flashdata('success', 'Dodano nowy moduł');
-                    redirect('back/content/edit/' . $id);
+                        // json encode in order to store the variables in the DB
+                        $mo_variables = json_encode($mo_variables);
+
+                        $this->module_m->insert(array(
+                            'mo_variables' =>  $mo_variables,
+                            'mo_form' => $this->module_m->create_editable_form($mo_variables, $_POST['mo_layout']),
+                            'mo_layout' => $_POST['mo_layout'],
+                            'mo_body' => $this->module_m->parse_form_to_html($mo_variables, $_POST['mo_layout']),
+                            'mo_description' => $_POST['mo_description'],
+                            'mo_order' => $this->module_m->count_modules($_POST['mo_layout'], $id),
+                            'mo_created_by' => $this->data_back['us_id'],
+                            'mo_pa_id' => $id
+                        ));
+
+                        $this->session->set_flashdata('success', 'Dodano nowy moduł');
+                        redirect('back/content/edit/' . $id);
+                    }
                 }
+
+
             }
+
+            $this->data_back['test'] = $this->module_m->get(28);
 
             $this->data_back['page']    = $this->page_m->get($id);
 
             $this->data_back['layouts'] = $this->page_m->get_layouts();
+
+            $this->data_back['files'] = $this->file_m->order_by('fi_created_at', 'DESC')->get_all();
 
             $this->data_back['forms']   = $this->page_m->get_forms();
 
@@ -143,39 +179,68 @@ class Content extends BACK_Controller {
     public function edit_module($mo_id) {
         if(!is_int($mo_id)) {
             if($_POST) {
-                $rules = $this->module_m->rules['update'][$_POST['mo_layout']];
+                // Check for the particular module name
+                $check_module_name = explode('-', $_POST['mo_layout']);
 
-                $this->form_validation->set_rules($rules);
+                if($check_module_name[0] == 'Galeria') {
+                    $rules = $this->module_m->rules['update'][$_POST['mo_layout']];
 
-                if($this->form_validation->run()) {
-                    $mo_variables = array();
+                    $this->form_validation->set_rules($rules);
 
-                    // Checking if the $_POST key starts with 'var'
-                    foreach ($_POST as $key => $value) {
-                        if(strpos($key, 'var') !== false) {
-                            $mo_variables[$key] = $value;
-
-                            unset($_POST[$key]);
+                    if($this->form_validation->run()) {
+                        $var_images = $_POST['var-image'];
+                        $files = array();
+                        foreach ($var_images as $key => $value) {
+                            $value = explode('.', $value); // Odseparowanie nazwy pliku od rozszerzenia
+                            $files[$key] = $this->file_m->where('fi_name', $value[0])->as_array()->get();
                         }
+
+                        $this->module_m->update(array(
+                            'mo_variables' =>  json_encode($files),
+                            'mo_form' => $this->module_m->create_dynamic_editable_form($files, $_POST['mo_layout']),
+                            'mo_body' => $this->module_m->parse_dynamic_form_to_html($files, $_POST['mo_layout']),
+                            'mo_description' => $_POST['mo_description'],
+                            'mo_updated_by' => $this->data_back['us_id']
+                        ), $mo_id);
+
+                        $this->session->set_flashdata('success', 'Zaktualizowano moduł');
+                        redirect('back/content/edit/' . $_POST['mo_pa_id']);
                     }
+                } else {
+                    $rules = $this->module_m->rules['update'][$_POST['mo_layout']];
 
-                    //var_dump($mo_variables);die();
+                    $this->form_validation->set_rules($rules);
 
-                    // json encode in order to store the variables in the DB
-                    $mo_variables = json_encode($mo_variables);
+                    if($this->form_validation->run()) {
+                        $mo_variables = array();
 
-                    //var_dump(json_decode($mo_variables), TRUE);die();
+                        // Checking if the $_POST key starts with 'var'
+                        foreach ($_POST as $key => $value) {
+                            if(strpos($key, 'var') !== false) {
+                                $mo_variables[$key] = $value;
 
-                    $this->module_m->update(array(
-                        'mo_variables' =>  $mo_variables,
-                        'mo_form' => $this->module_m->create_editable_form($mo_variables, $_POST['mo_layout']),
-                        'mo_body' => $this->module_m->parse_form_to_html($mo_variables, $_POST['mo_layout']),
-                        'mo_description' => $_POST['mo_description'],
-                        'mo_updated_by' => $this->data_back['us_id']
-                    ), $mo_id);
+                                unset($_POST[$key]);
+                            }
+                        }
 
-                    $this->session->set_flashdata('success', 'Zaktualizowano moduł');
-                    redirect('back/content/edit/' . $_POST['mo_pa_id']);
+                        //var_dump($mo_variables);die();
+
+                        // json encode in order to store the variables in the DB
+                        $mo_variables = json_encode($mo_variables);
+
+                        //var_dump(json_decode($mo_variables), TRUE);die();
+
+                        $this->module_m->update(array(
+                            'mo_variables' =>  $mo_variables,
+                            'mo_form' => $this->module_m->create_editable_form($mo_variables, $_POST['mo_layout']),
+                            'mo_body' => $this->module_m->parse_form_to_html($mo_variables, $_POST['mo_layout']),
+                            'mo_description' => $_POST['mo_description'],
+                            'mo_updated_by' => $this->data_back['us_id']
+                        ), $mo_id);
+
+                        $this->session->set_flashdata('success', 'Zaktualizowano moduł');
+                        redirect('back/content/edit/' . $_POST['mo_pa_id']);
+                    }
                 }
             }
 
