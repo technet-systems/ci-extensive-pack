@@ -22,6 +22,11 @@
 * Media
     * [x] CRUD
     * [x] Adding to specific module
+* Widgets
+    * [ ] CRUD
+    * [ ] Sorting areas containing widgets
+* Footer
+    * [ ] CRUD
 
 ## Change log:
 
