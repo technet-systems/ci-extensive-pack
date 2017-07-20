@@ -314,37 +314,59 @@
 
         // START ADD NEW PICK IMAGE FIELD
         $('.add_new_pick_image_field').click(function() {
+            var attr;
+
+            if($(this).attr('data-add-id')) {
+                attr = 'id';
+            } else {
+                attr = 'value';
+            }
 
             var $add_new_pick_image_field = $(this);
 
+
+
+
+
+
+            var $add_new_pick_image_field = $(this);
+
+            var data_new_field_value = $add_new_pick_image_field.attr('data-add-' + attr);
+
             $add_new_pick_image_field.addClass('disabled');
+            $('[type=submit]').addClass('disabled').attr('disabled', 'disabled');
 
             var random_number;
 
             random_number = Math.floor(Math.random() * (9999999999 - 1000000000 + 1)) + 1000000000;
 
-            $('.new-field').append('<div class="form-group" data-form-group-id="1499682598' + random_number + '"><label for="var-image" class="col-sm-3 control-label">Wybierz plik <code>*</code></label><div class="col-sm-9"><a href="#" class="btn btn-w-md btn-success modal-image-picker" data-toggle="modal" data-target="#modalADDpicture" data-button-id="1499682598' + random_number + '">Dodaj plik</a> <a href="#" class="btn btn-w-md btn-default" data-cancel-id="1499682598' + random_number + '">Anuluj</a><input type="hidden" name="var-image[]" id="{{ var-image }}" value="" data-input-id="1499682598' + random_number + '"></div></div>');
+            //$('.new-field').append('<div class="form-group" data-form-group-id="1499682598' + random_number + '"><label for="var-image" class="col-sm-3 control-label">Wybierz plik <code>*</code></label><div class="col-sm-9"><a href="#" class="btn btn-w-md btn-success modal-image-picker" data-toggle="modal" data-target="#modalADDpicture" data-button-id="1499682598' + random_number + '">Dodaj plik</a> <a href="#" class="btn btn-w-md btn-default" data-cancel-id="1499682598' + random_number + '">Anuluj</a><input type="hidden" name="var-image[]" id="{{ var-image }}" value="" data-input-id="1499682598' + random_number + '"></div></div>');
+            $('[data-new-field-' + attr + '=' + data_new_field_value + ']').append('<div class="form-group" data-form-group-id="1499682598' + random_number + '"><label for="var-image" class="col-sm-3 control-label">Wybierz plik <code>*</code></label><div class="col-sm-9"><a href="#" class="btn btn-w-md btn-success modal-image-picker" data-toggle="modal" data-target="#modalADDpicture" data-button-id="1499682598' + random_number + '">Dodaj plik</a> <a href="#" class="btn btn-w-md btn-default" data-cancel-id="1499682598' + random_number + '">Anuluj</a><input type="hidden" name="var-image[]" id="{{ var-image }}" value="" data-input-id="1499682598' + random_number + '"></div></div>');
 
             // Usunięcie innych pojawiąjących się
 
             $('.modal-image-picker').click(function(){
-                var data_button_id = $(this).attr('data-button-id');
+                var data_button_id = $(this).attr('data-button-' + attr);
 
-                $(".pick-image").bind('click', function() {
+                $('.pick-image').on('click', function () {
                     var id = this.id;
-                    $('[data-input-id=' + data_button_id + ']').attr('value', id);
-                    $('[data-button-id=' + data_button_id + ']').text(id);
+                    $('[data-input-' + attr + '=' + data_button_id + ']').attr('value', id);
+                    $('[data-button-' + attr + '=' + data_button_id + ']').text(id);
 
                     data_button_id = 'undefined';
 
                     $add_new_pick_image_field.removeClass('disabled');
+                    $('[type=submit]').removeClass('disabled').removeAttr('disabled', 'disabled');
                 });
+
             });
 
-            $('[data-cancel-id]').click(function() {
+            $('[data-cancel-' + attr + ']').click(function() {
                 var data_cancel_id;
-                data_cancel_id = $(this).attr('data-cancel-id');
-                $('[data-form-group-id=' + data_cancel_id + ']').remove();
+                data_cancel_id = $(this).attr('data-cancel-' + attr);
+                $('[data-form-group-' + attr + '=' + data_cancel_id + ']').remove();
+                $('.add_new_pick_image_field').removeClass('disabled');
+                $('[type=submit]').removeClass('disabled').removeAttr('disabled', 'disabled');
 
                 return false;
             });
@@ -352,26 +374,6 @@
             return false;
         });
         // END ADD NEW PICK IMAGE FIELD
-
-        // START DELETE AN EXISTING IMAGE FROM EDITED MODULE FORM
-        $('[data-cancel-value]').click(function() {
-            var data_cancel_value;
-            data_cancel_value = $(this).attr('data-cancel-value');
-            $('[data-form-group-value=' + data_cancel_value + ']').remove();
-
-            return false;
-        });
-        // END DELETE AN EXISTING IMAGE FROM EDITED MODULE FORM
-
-
-
-        // START TEST
-        $('[data-module-value]').click(function () {
-            var $data_module_value = $(this).attr('data-module-value');
-
-
-        });
-        // END TEST
 
         $(".select2_demo_1").select2();
 
@@ -436,7 +438,7 @@
     });
 
     $(function () {
-        $('[data-toggle="tooltip"]').tooltip()
-    })
+        $('[data-toggle="tooltip"]').tooltip();
+    });
 </script>
 {% endblock %}
