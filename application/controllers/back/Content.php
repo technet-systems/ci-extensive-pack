@@ -253,7 +253,10 @@ class Content extends BACK_Controller {
 
             $this->twig->display('back/content/page_edit_v', $this->data_back);
             */
-            $this->edit($_POST['mo_pa_id']);
+
+            $this->form_validation->set_error_delimiters('', '');
+            $this->session->set_flashdata('error', validation_errors());
+            redirect('back/content/edit/' . $_POST['mo_pa_id']);
         } else {
             $this->session->set_flashdata('error', 'Nie znalazłem żądanego modułu');
             redirect('back/content/page');

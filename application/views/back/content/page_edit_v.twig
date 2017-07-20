@@ -14,9 +14,11 @@
                     {{ validation_errors('<div class="panel panel-filled panel-c-danger"><div class="panel-heading">', '</div></div>') | raw}}
 
                     {% if session.flashdata.error == TRUE %}
-                        <div class="panel panel-filled panel-c-danger"><div class="panel-heading">{{ session.flashdata.error }}</div></div>
+
+                        <div class="panel panel-filled panel-c-danger"><div class="panel-heading">{{ session.flashdata.error | raw }}</div></div>
                     {% elseif session.flashdata.success == TRUE %}
-                        <div class="panel panel-filled panel-c-success"><div class="panel-heading">{{ session.flashdata.success }}</div></div>
+
+                        <div class="panel panel-filled panel-c-success"><div class="panel-heading">{{ session.flashdata.success | raw }}</div></div>
                     {% endif %}
                 </div>
             </div>
@@ -346,12 +348,12 @@
             // Usunięcie innych pojawiąjących się
 
             $('.modal-image-picker').click(function(){
-                var data_button_id = $(this).attr('data-button-' + attr);
+                var data_button_id = $(this).attr('data-button-id');
 
                 $('.pick-image').on('click', function () {
                     var id = this.id;
-                    $('[data-input-' + attr + '=' + data_button_id + ']').attr('value', id);
-                    $('[data-button-' + attr + '=' + data_button_id + ']').text(id);
+                    $('[data-input-id=' + data_button_id + ']').attr('value', id);
+                    $('[data-button-id=' + data_button_id + ']').text(id);
 
                     data_button_id = 'undefined';
 
@@ -361,10 +363,10 @@
 
             });
 
-            $('[data-cancel-' + attr + ']').click(function() {
+            $('[data-cancel-id]').click(function() {
                 var data_cancel_id;
-                data_cancel_id = $(this).attr('data-cancel-' + attr);
-                $('[data-form-group-' + attr + '=' + data_cancel_id + ']').remove();
+                data_cancel_id = $(this).attr('data-cancel-id');
+                $('[data-form-group-id=' + data_cancel_id + ']').remove();
                 $('.add_new_pick_image_field').removeClass('disabled');
                 $('[type=submit]').removeClass('disabled').removeAttr('disabled', 'disabled');
 
@@ -374,6 +376,16 @@
             return false;
         });
         // END ADD NEW PICK IMAGE FIELD
+
+        $('[data-cancel-value]').click(function() {
+            var data_cancel_value;
+            data_cancel_value = $(this).attr('data-cancel-value');
+            $('[data-form-group-value=' + data_cancel_value + ']').remove();
+            $('.add_new_pick_image_field').removeClass('disabled');
+            $('[type=submit]').removeClass('disabled').removeAttr('disabled', 'disabled');
+
+            return false;
+        });
 
         $(".select2_demo_1").select2();
 
